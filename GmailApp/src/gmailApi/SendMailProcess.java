@@ -10,6 +10,7 @@ import com.google.api.services.gmail.Gmail;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -23,6 +24,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -41,19 +43,17 @@ public class SendMailProcess {
      * @param body String noi dung cua mail
      * @param fileName: String[] danh sach nhung file can attach
      */
-    Gmail service;
-    String userId;
+    Gmail service = GlobalVariable.getService();
+    String userId = GlobalVariable.userId;
     String[] toMail;
     String[] cc;
     String[] bcc;
     String subject;
     String body;
-    String[] fileName;
+    List<String> fileName;
     MimeMessage msg;
 
-    public SendMailProcess(Gmail service, String userId, String[] toMail, String[] cc, String[] bcc, String subject, String body) {
-	this.service = service;
-	this.userId = userId;
+    public SendMailProcess(String[] toMail, String[] cc, String[] bcc, String subject, String body) {
 	this.toMail = toMail;
 	this.cc = cc;
 	this.bcc = bcc;
@@ -61,9 +61,7 @@ public class SendMailProcess {
 	this.body = body;
     }
 
-    public SendMailProcess(Gmail service, String userId, String[] toMail, String[] cc, String[] bcc, String subject, String body, String[] fileName) {
-	this.service = service;
-	this.userId = userId;
+    public SendMailProcess(String[] toMail, String[] cc, String[] bcc, String subject, String body, List<String> fileName) {
 	this.toMail = toMail;
 	this.cc = cc;
 	this.bcc = bcc;
@@ -90,7 +88,7 @@ public class SendMailProcess {
 	message.setRaw(encodedEmail);
 	return message;
     }
- 
+
     // chuẩn bị phần mail là dạng text
     private void prepareTextMail() {
 	Properties props = new Properties();
@@ -108,19 +106,21 @@ public class SendMailProcess {
 	    //msg.setReplyTo(InternetAddress.parse(GetMailGmail.fromMail,false));
 
 	    // set cc
-	    InternetAddress[] listcc = new InternetAddress[cc.length];
-	    for (int i = 0; i < cc.length; i++) {
-		listcc[i] = new InternetAddress(cc[i]);
+	    if (cc != null) {
+		InternetAddress[] listcc = new InternetAddress[cc.length];
+		for (int i = 0; i < cc.length; i++) {
+		    listcc[i] = new InternetAddress(cc[i]);
+		}
+		msg.setRecipients(Message.RecipientType.CC, listcc);
 	    }
-	    msg.setRecipients(Message.RecipientType.CC, listcc);
-
 	    // set bcc
-	    InternetAddress[] listbcc = new InternetAddress[bcc.length];
-	    for (int i = 0; i < bcc.length; i++) {
-		listbcc[i] = new InternetAddress(bcc[i]);
+	    if (bcc != null) {
+		InternetAddress[] listbcc = new InternetAddress[bcc.length];
+		for (int i = 0; i < bcc.length; i++) {
+		    listbcc[i] = new InternetAddress(bcc[i]);
+		}
+		msg.setRecipients(Message.RecipientType.BCC, listbcc);
 	    }
-	    msg.setRecipients(Message.RecipientType.BCC, listbcc);
-
 	    // set to mail
 	    InternetAddress[] listto = new InternetAddress[toMail.length];
 	    for (int i = 0; i < toMail.length; i++) {
@@ -149,7 +149,7 @@ public class SendMailProcess {
 	    attachBodyPart.setDataHandler(dh);
 	    attachBodyPart.setFileName(file);
 	    multiPart.addBodyPart(attachBodyPart);
-	} catch (Exception e) {
+	} catch (MessagingException e) {
 	    System.out.println(e.toString());
 	    System.out.println("Failed to add file: " + file);
 	}
@@ -171,8 +171,8 @@ public class SendMailProcess {
 	    multiPart.addBodyPart(msgBodyPart);
 
 	    // add the second part (attachment)
-	    for (int i = 0; i < fileName.length; i++) {
-		addAttachment(multiPart, fileName[i]);
+	    for (int i = 0; i < fileName.size(); i++) {
+		addAttachment(multiPart, fileName.get(i));
 	    }
 
 	    // set msg full part(text + attachment) 
@@ -191,7 +191,6 @@ public class SendMailProcess {
      * @param userId User's email address. The special value "me" can be used to
      * indicate the authenticated user.
      * @param emailContent Email to be sent.
-     * @return The sent message
      * @throws MessagingException
      * @throws IOException
      */
@@ -200,11 +199,11 @@ public class SendMailProcess {
 	    MimeMessage emailContent)
 	    throws MessagingException, IOException {
 	com.google.api.services.gmail.model.Message message = createMessageWithEmail(emailContent);
-	message = service.users().messages().send(userId, message).execute();
-
-	System.out.println("Message id: " + message.getId());
-	System.out.println(message.toPrettyString());
-	System.out.println("Send Succesful !");
+	service.users().messages().send(userId, message).execute();
+//	chỉ dành cho khi test chức năng
+//	System.out.println("Message id: " + message.getId());
+//	System.out.println(message.toPrettyString());
+//	System.out.println("Send Succesful !");
 //        return message;
     }
 
@@ -215,7 +214,7 @@ public class SendMailProcess {
      * @throws IOException
      */
     public void setUpAndSend() throws MessagingException, IOException {
-	if (fileName.length == 0) {
+	if (fileName == null) {
 	    // just Text mail
 	    prepareTextMail();
 	} else {

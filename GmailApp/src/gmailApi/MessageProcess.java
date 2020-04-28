@@ -59,29 +59,31 @@ public class MessageProcess {
      * lấy danh sách mail tu label da chon
      *
      * @param service
+     * @param num số lượng mail muốn load trong 1 lần
      * @param userId
      * @param loadFromLabel : nhung label dc su dung de load message
      * @return tra ve danh sach message
      * @throws IOException
      * @throws MessagingException
      */
-    public static List<Message> getListMail(List<String> loadFromLabel) throws IOException, MessagingException {
+    public static List<Message> getListMail(List<String> loadFromLabel, int num) throws IOException, MessagingException {
 	Gmail service = GlobalVariable.getService();
 	String userId = GlobalVariable.userId;
 	//list response cua mail list
 	ListMessagesResponse response;
-	response = service.users().messages().list(userId).setLabelIds(loadFromLabel).setMaxResults(Long.valueOf(2)).execute();
+	response = service.users().messages().list(userId).setLabelIds(loadFromLabel).setMaxResults(Long.valueOf(num)).execute();
 	//doc tung mail
 	List<Message> messages = new ArrayList<>();
-	while (response.getMessages() != null) {
-	    messages.addAll(response.getMessages());
-	    if (response.getNextPageToken() != null) {
-		String pageToken = response.getNextPageToken();
-		response = service.users().messages().list(userId).setLabelIds(loadFromLabel).setPageToken(pageToken).execute();
-	    } else {
-		break;
-	    }
-	}
+	messages.addAll(response.getMessages());
+//	while (response.getMessages() != null) {
+	    
+//	    if (response.getNextPageToken() != null) {
+//		String pageToken = response.getNextPageToken();
+//		response = service.users().messages().list(userId).setLabelIds(loadFromLabel).setPageToken(pageToken).execute();
+//	    } else {
+//		break;
+//	    }
+//	}
 
 //	for (Message message : messages) {
 //	    System.out.println(message.toPrettyString());

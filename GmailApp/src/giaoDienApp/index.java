@@ -21,11 +21,16 @@ import javax.swing.JPanel;
 import customException.FailToLoadInitInboxException;
 import gmailApi.GlobalVariable;
 import gmailApi.MessageProcess;
+import gmailApi.SendMailProcess;
 import gmailApi.XuLyFile;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
@@ -38,13 +43,28 @@ public class index extends javax.swing.JFrame {
     /**
      * Creates new form main
      */
+    GridBagLayout layout = new GridBagLayout();
+
     public index() {
 	setLocation(450, 200);
 	initComponents();
+	//setting dynamic panel for 2 option(Read/write)Panel
+	dynamicOption_Pn.setLayout(layout);
+	GridBagConstraints c = new GridBagConstraints();
+	c.gridx = 0;
+	c.gridy = 0;
+	this.optionReadMail_Pn.setSize(600, 70);
+	dynamicOption_Pn.add(this.optionReadMail_Pn);
+	c.gridx = 0;
+	c.gridy = 0;
+	this.optionWriteMail_Pn.setSize(600, 70);
+	dynamicOption_Pn.add(this.optionWriteMail_Pn);
+	this.optionReadMail_Pn.setVisible(false);
+	this.optionWriteMail_Pn.setVisible(false);
+
 	loadStartUpMailBox();
 	list_mailbox_panel.setVisible(true);
-	read_mail_panel.setVisible(false);
-	write_mail_panel.setVisible(false);
+	mail_panel.setVisible(false);
 
     }
     List<MessageObject> messageInbox;
@@ -68,57 +88,39 @@ public class index extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
-        write_mail_panel = new javax.swing.JPanel();
-        lb_nothing1 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
-        write_mail_to = new javax.swing.JTextField();
-        write_mail_cc = new javax.swing.JTextField();
-        write_mail_bcc = new javax.swing.JTextField();
-        jLabel17 = new javax.swing.JLabel();
-        write_mail_sub = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        write_mail_content = new javax.swing.JTextArea();
-        jPanel2 = new javax.swing.JPanel();
-        write_mail_sent = new javax.swing.JLabel();
-        write_mail_cancel = new javax.swing.JLabel();
-        lb_ = new javax.swing.JLabel();
-        write_mail_select_file = new javax.swing.JButton();
-        write_mail_file_name = new javax.swing.JTextField();
-        write_mail_from = new javax.swing.JTextField();
         read_mail_file_cbx = new javax.swing.JTextField();
-        background_all = new javax.swing.JPanel();
-        read_mail_panel = new javax.swing.JPanel();
-        lb_nothing2 = new javax.swing.JLabel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        read_mail_content = new javax.swing.JTextArea();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel19 = new javax.swing.JLabel();
-        read_mail_to = new javax.swing.JTextField();
-        read_mail_cc = new javax.swing.JTextField();
-        read_mail_bcc = new javax.swing.JTextField();
-        jLabel20 = new javax.swing.JLabel();
-        read_mail_sub = new javax.swing.JTextField();
-        jPanel3 = new javax.swing.JPanel();
+        menu_new_panel = new javax.swing.JPanel();
+        menu_trash_panel = new javax.swing.JPanel();
+        menu_mailbox_panel1 = new javax.swing.JPanel();
+        menu_mailbox_panel = new javax.swing.JPanel();
+        optionReadMail_Pn = new javax.swing.JPanel();
         read_mail_reply = new javax.swing.JLabel();
         read_mail_trash = new javax.swing.JLabel();
         lb_1 = new javax.swing.JLabel();
         read_mail_download = new javax.swing.JLabel();
         read_mail_file_Jcb = new javax.swing.JComboBox<>();
-        read_mail_from = new javax.swing.JTextField();
+        background_all = new javax.swing.JPanel();
+        logo = new javax.swing.JLabel();
+        mail_panel = new javax.swing.JPanel();
+        lb_nothing2 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        mail_content = new javax.swing.JTextArea();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        mail_to = new javax.swing.JTextField();
+        mail_cc = new javax.swing.JTextField();
+        mail_bcc = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
+        mail_subject = new javax.swing.JTextField();
+        mail_from = new javax.swing.JTextField();
         read_mail_date = new javax.swing.JTextField();
-        adddd = new javax.swing.JLabel();
+        date_Lb = new javax.swing.JLabel();
         menu_panel = new javax.swing.JPanel();
         lb_hide_menu = new javax.swing.JLabel();
-        menu_new_panel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        menu_trash_panel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        menu_mailbox_panel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        menu_mailbox_panel1 = new javax.swing.JPanel();
+        newMail_Lb = new javax.swing.JLabel();
+        trash_Lb = new javax.swing.JLabel();
+        inbox_Lb = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         list_mailbox_panel = new javax.swing.JPanel();
         list_mailbox_search = new javax.swing.JTextField();
@@ -129,9 +131,15 @@ public class index extends javax.swing.JFrame {
         lb_name = new javax.swing.JLabel();
         prevLoadMail_Bt = new javax.swing.JButton();
         nextLoadMail_Bt = new javax.swing.JButton();
-        logo = new javax.swing.JLabel();
         lb_name_mail = new javax.swing.JLabel();
         background_img = new javax.swing.JLabel();
+        dynamicOption_Pn = new javax.swing.JPanel();
+        optionWriteMail_Pn = new javax.swing.JPanel();
+        writeMailSent_Lb = new javax.swing.JLabel();
+        writeMailCancel_Lb = new javax.swing.JLabel();
+        fileChoose_Lb = new javax.swing.JLabel();
+        writeMailSelectFile_Bt = new javax.swing.JButton();
+        writeMailfileInput_Jcb = new javax.swing.JComboBox<>();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -139,234 +147,114 @@ public class index extends javax.swing.JFrame {
 
         jMenuItem3.setText("jMenuItem3");
 
-        write_mail_panel.setOpaque(false);
-
-        lb_nothing1.setText("From :");
-
-        jLabel4.setText("To :");
-
-        jLabel15.setText("Cc :");
-
-        jLabel16.setText("Bcc :");
-
-        write_mail_to.setOpaque(false);
-        write_mail_to.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                write_mail_toActionPerformed(evt);
-            }
-        });
-
-        write_mail_cc.setOpaque(false);
-
-        write_mail_bcc.setOpaque(false);
-
-        jLabel17.setText("Subject :");
-
-        write_mail_sub.setOpaque(false);
-
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        write_mail_content.setColumns(20);
-        write_mail_content.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        write_mail_content.setLineWrap(true);
-        write_mail_content.setRows(5);
-        jScrollPane1.setViewportView(write_mail_content);
-
-        jPanel2.setBackground(new java.awt.Color(39, 129, 191));
-
-        write_mail_sent.setBackground(new java.awt.Color(39, 129, 191));
-        write_mail_sent.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        write_mail_sent.setForeground(new java.awt.Color(255, 255, 255));
-        write_mail_sent.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-sent-35.png"))); // NOI18N
-        write_mail_sent.setText("Sent");
-        write_mail_sent.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        write_mail_sent.setOpaque(true);
-        write_mail_sent.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                write_mail_sentMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                write_mail_sentMouseExited(evt);
-            }
-        });
-
-        write_mail_cancel.setBackground(new java.awt.Color(39, 129, 191));
-        write_mail_cancel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        write_mail_cancel.setForeground(new java.awt.Color(255, 255, 255));
-        write_mail_cancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-cancel-35.png"))); // NOI18N
-        write_mail_cancel.setText("Cancel");
-        write_mail_cancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        write_mail_cancel.setOpaque(true);
-        write_mail_cancel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                write_mail_cancelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                write_mail_cancelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                write_mail_cancelMouseExited(evt);
-            }
-        });
-
-        lb_.setBackground(new java.awt.Color(39, 129, 191));
-        lb_.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        lb_.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-file-30.png"))); // NOI18N
-        lb_.setText("File ");
-
-        write_mail_select_file.setBackground(new java.awt.Color(39, 129, 191));
-        write_mail_select_file.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        write_mail_select_file.setText("Select file");
-        write_mail_select_file.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        write_mail_select_file.setOpaque(false);
-        write_mail_select_file.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                write_mail_select_fileActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addComponent(lb_)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(write_mail_file_name, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(write_mail_select_file)
-                .addGap(18, 18, 18)
-                .addComponent(write_mail_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(write_mail_sent, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(write_mail_sent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(write_mail_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(lb_, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(write_mail_select_file, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(write_mail_file_name, javax.swing.GroupLayout.Alignment.LEADING))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        write_mail_from.setEditable(false);
-
-        javax.swing.GroupLayout write_mail_panelLayout = new javax.swing.GroupLayout(write_mail_panel);
-        write_mail_panel.setLayout(write_mail_panelLayout);
-        write_mail_panelLayout.setHorizontalGroup(
-            write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, write_mail_panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, write_mail_panelLayout.createSequentialGroup()
-                        .addGroup(write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lb_nothing1)
-                            .addComponent(jLabel4))
-                        .addGap(20, 20, 20)
-                        .addGroup(write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(write_mail_to)
-                            .addComponent(write_mail_from)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, write_mail_panelLayout.createSequentialGroup()
-                        .addGroup(write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel15)
-                            .addComponent(jLabel16)
-                            .addComponent(jLabel17))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(write_mail_bcc)
-                            .addComponent(write_mail_cc)
-                            .addComponent(write_mail_sub)))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        write_mail_panelLayout.setVerticalGroup(
-            write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(write_mail_panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lb_nothing1)
-                    .addComponent(write_mail_from, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(write_mail_to, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(write_mail_cc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16)
-                    .addComponent(write_mail_bcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(write_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(write_mail_sub, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(11, 11, 11))
-        );
-
-        write_mail_panelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel15, jLabel16, jLabel4, lb_nothing1});
-
-        write_mail_panel.getAccessibleContext().setAccessibleName("");
-
         read_mail_file_cbx.setEditable(false);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setSize(new java.awt.Dimension(1000, 625));
-
-        background_all.setFocusable(false);
-        background_all.setMinimumSize(new java.awt.Dimension(1000, 625));
-        background_all.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        read_mail_panel.setOpaque(false);
-
-        lb_nothing2.setText("From :");
-
-        jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane4.setOpaque(false);
-
-        read_mail_content.setEditable(false);
-        read_mail_content.setColumns(20);
-        read_mail_content.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        read_mail_content.setLineWrap(true);
-        read_mail_content.setRows(5);
-        jScrollPane4.setViewportView(read_mail_content);
-
-        jLabel10.setText("To :");
-
-        jLabel18.setText("Cc :");
-
-        jLabel19.setText("Bcc :");
-
-        read_mail_to.setEditable(false);
-        read_mail_to.setOpaque(false);
-        read_mail_to.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                read_mail_toActionPerformed(evt);
+        menu_new_panel.setToolTipText("New");
+        menu_new_panel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menu_new_panel.setOpaque(false);
+        menu_new_panel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menu_new_panelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                menu_new_panelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                menu_new_panelMouseExited(evt);
             }
         });
 
-        read_mail_cc.setEditable(false);
-        read_mail_cc.setOpaque(false);
+        javax.swing.GroupLayout menu_new_panelLayout = new javax.swing.GroupLayout(menu_new_panel);
+        menu_new_panel.setLayout(menu_new_panelLayout);
+        menu_new_panelLayout.setHorizontalGroup(
+            menu_new_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 65, Short.MAX_VALUE)
+        );
+        menu_new_panelLayout.setVerticalGroup(
+            menu_new_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 60, Short.MAX_VALUE)
+        );
 
-        read_mail_bcc.setEditable(false);
-        read_mail_bcc.setOpaque(false);
+        menu_trash_panel.setToolTipText("Trash");
+        menu_trash_panel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menu_trash_panel.setOpaque(false);
+        menu_trash_panel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menu_trash_panelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                menu_trash_panelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                menu_trash_panelMouseExited(evt);
+            }
+        });
 
-        jLabel20.setText("Subject :");
+        javax.swing.GroupLayout menu_trash_panelLayout = new javax.swing.GroupLayout(menu_trash_panel);
+        menu_trash_panel.setLayout(menu_trash_panelLayout);
+        menu_trash_panelLayout.setHorizontalGroup(
+            menu_trash_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 65, Short.MAX_VALUE)
+        );
+        menu_trash_panelLayout.setVerticalGroup(
+            menu_trash_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 60, Short.MAX_VALUE)
+        );
 
-        read_mail_sub.setEditable(false);
-        read_mail_sub.setOpaque(false);
+        menu_mailbox_panel1.setToolTipText("Mail Box");
+        menu_mailbox_panel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menu_mailbox_panel1.setOpaque(false);
+        menu_mailbox_panel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menu_mailbox_panel1MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                menu_mailbox_panel1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                menu_mailbox_panel1MouseExited(evt);
+            }
+        });
 
-        jPanel3.setBackground(new java.awt.Color(39, 129, 191));
+        javax.swing.GroupLayout menu_mailbox_panel1Layout = new javax.swing.GroupLayout(menu_mailbox_panel1);
+        menu_mailbox_panel1.setLayout(menu_mailbox_panel1Layout);
+        menu_mailbox_panel1Layout.setHorizontalGroup(
+            menu_mailbox_panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 65, Short.MAX_VALUE)
+        );
+        menu_mailbox_panel1Layout.setVerticalGroup(
+            menu_mailbox_panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 60, Short.MAX_VALUE)
+        );
+
+        menu_mailbox_panel.setToolTipText("Mail Box");
+        menu_mailbox_panel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menu_mailbox_panel.setOpaque(false);
+        menu_mailbox_panel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menu_mailbox_panelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                menu_mailbox_panelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                menu_mailbox_panelMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout menu_mailbox_panelLayout = new javax.swing.GroupLayout(menu_mailbox_panel);
+        menu_mailbox_panel.setLayout(menu_mailbox_panelLayout);
+        menu_mailbox_panelLayout.setHorizontalGroup(
+            menu_mailbox_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 65, Short.MAX_VALUE)
+        );
+        menu_mailbox_panelLayout.setVerticalGroup(
+            menu_mailbox_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 60, Short.MAX_VALUE)
+        );
+
+        optionReadMail_Pn.setBackground(new java.awt.Color(39, 129, 191));
+        optionReadMail_Pn.setPreferredSize(new java.awt.Dimension(662, 67));
 
         read_mail_reply.setBackground(new java.awt.Color(39, 129, 191));
         read_mail_reply.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
@@ -436,40 +324,101 @@ public class index extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout optionReadMail_PnLayout = new javax.swing.GroupLayout(optionReadMail_Pn);
+        optionReadMail_Pn.setLayout(optionReadMail_PnLayout);
+        optionReadMail_PnLayout.setHorizontalGroup(
+            optionReadMail_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(optionReadMail_PnLayout.createSequentialGroup()
                 .addComponent(lb_1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(5, 5, 5)
                 .addComponent(read_mail_file_Jcb, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(read_mail_download)
                 .addGap(24, 24, 24)
                 .addComponent(read_mail_trash, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(7, 7, 7)
                 .addComponent(read_mail_reply, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lb_1)
-                    .addComponent(read_mail_file_Jcb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(read_mail_download, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(read_mail_trash, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(read_mail_reply, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        optionReadMail_PnLayout.setVerticalGroup(
+            optionReadMail_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(optionReadMail_PnLayout.createSequentialGroup()
+                .addGroup(optionReadMail_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(optionReadMail_PnLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(lb_1))
+                    .addGroup(optionReadMail_PnLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(read_mail_file_Jcb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(optionReadMail_PnLayout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(read_mail_download))
+                    .addGroup(optionReadMail_PnLayout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(read_mail_trash))
+                    .addGroup(optionReadMail_PnLayout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(read_mail_reply)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        read_mail_from.setEditable(false);
-        read_mail_from.setOpaque(false);
-        read_mail_from.addActionListener(new java.awt.event.ActionListener() {
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setSize(new java.awt.Dimension(1000, 625));
+
+        background_all.setFocusable(false);
+        background_all.setMinimumSize(new java.awt.Dimension(1000, 625));
+        background_all.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        logo.setFont(new java.awt.Font("Lucida Console", 1, 24)); // NOI18N
+        logo.setForeground(new java.awt.Color(172, 93, 93));
+        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logo.png"))); // NOI18N
+        logo.setText("GMAIL");
+        background_all.add(logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 170, -1));
+
+        mail_panel.setOpaque(false);
+
+        lb_nothing2.setText("From :");
+
+        jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane4.setOpaque(false);
+
+        mail_content.setEditable(false);
+        mail_content.setColumns(20);
+        mail_content.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        mail_content.setLineWrap(true);
+        mail_content.setRows(5);
+        jScrollPane4.setViewportView(mail_content);
+
+        jLabel10.setText("To :");
+
+        jLabel18.setText("Cc :");
+
+        jLabel19.setText("Bcc :");
+
+        mail_to.setEditable(false);
+        mail_to.setOpaque(false);
+        mail_to.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                read_mail_fromActionPerformed(evt);
+                mail_toActionPerformed(evt);
+            }
+        });
+
+        mail_cc.setEditable(false);
+        mail_cc.setOpaque(false);
+
+        mail_bcc.setEditable(false);
+        mail_bcc.setOpaque(false);
+
+        jLabel20.setText("Subject :");
+
+        mail_subject.setEditable(false);
+        mail_subject.setOpaque(false);
+
+        mail_from.setEditable(false);
+        mail_from.setOpaque(false);
+        mail_from.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mail_fromActionPerformed(evt);
             }
         });
 
@@ -481,73 +430,72 @@ public class index extends javax.swing.JFrame {
             }
         });
 
-        adddd.setText("Date :");
+        date_Lb.setText("Date :");
 
-        javax.swing.GroupLayout read_mail_panelLayout = new javax.swing.GroupLayout(read_mail_panel);
-        read_mail_panel.setLayout(read_mail_panelLayout);
-        read_mail_panelLayout.setHorizontalGroup(
-            read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(read_mail_panelLayout.createSequentialGroup()
+        javax.swing.GroupLayout mail_panelLayout = new javax.swing.GroupLayout(mail_panel);
+        mail_panel.setLayout(mail_panelLayout);
+        mail_panelLayout.setHorizontalGroup(
+            mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mail_panelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(read_mail_panelLayout.createSequentialGroup()
-                        .addGroup(read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mail_panelLayout.createSequentialGroup()
+                        .addGroup(mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel18)
                             .addComponent(jLabel19)
                             .addComponent(jLabel20)
                             .addComponent(jLabel10)
                             .addComponent(lb_nothing2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(read_mail_to)
-                            .addComponent(read_mail_bcc)
-                            .addComponent(read_mail_cc)
-                            .addComponent(read_mail_sub)
-                            .addGroup(read_mail_panelLayout.createSequentialGroup()
-                                .addComponent(read_mail_from)
+                        .addGroup(mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(mail_bcc, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(mail_cc, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(mail_to, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, mail_panelLayout.createSequentialGroup()
+                                .addComponent(mail_from)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(adddd)
+                                .addComponent(date_Lb)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(read_mail_date, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap())
+                                .addComponent(read_mail_date, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(mail_subject))
+                        .addGap(47, 47, 47))
+                    .addGroup(mail_panelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 662, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
-        read_mail_panelLayout.setVerticalGroup(
-            read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(read_mail_panelLayout.createSequentialGroup()
+        mail_panelLayout.setVerticalGroup(
+            mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mail_panelLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addGroup(read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(adddd)
+                .addGroup(mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(date_Lb)
                         .addComponent(read_mail_date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lb_nothing2)
-                        .addComponent(read_mail_from, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(mail_from, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(read_mail_to, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mail_to, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
-                    .addComponent(read_mail_cc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mail_cc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel19)
-                    .addComponent(read_mail_bcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mail_bcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(read_mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(mail_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(read_mail_sub, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mail_subject, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        background_all.add(read_mail_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(315, 80, 690, 552));
+        background_all.add(mail_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(315, 80, 680, 460));
 
         menu_panel.setBackground(new java.awt.Color(54, 70, 78));
         menu_panel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -565,165 +513,45 @@ public class index extends javax.swing.JFrame {
                 lb_hide_menuMouseExited(evt);
             }
         });
-        menu_panel.add(lb_hide_menu, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 30, 40));
+        menu_panel.add(lb_hide_menu, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 30, 40));
 
-        menu_new_panel.setToolTipText("New");
-        menu_new_panel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menu_new_panel.setOpaque(false);
-        menu_new_panel.addMouseListener(new java.awt.event.MouseAdapter() {
+        newMail_Lb.setBackground(new java.awt.Color(102, 204, 255));
+        newMail_Lb.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        newMail_Lb.setForeground(new java.awt.Color(255, 255, 255));
+        newMail_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-add-file-40.png"))); // NOI18N
+        newMail_Lb.setToolTipText("New mail");
+        newMail_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menu_new_panelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                menu_new_panelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                menu_new_panelMouseExited(evt);
+                newMail_LbMouseClicked(evt);
             }
         });
+        menu_panel.add(newMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
 
-        jLabel1.setBackground(new java.awt.Color(102, 204, 255));
-        jLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-add-file-40.png"))); // NOI18N
+        trash_Lb.setBackground(new java.awt.Color(102, 204, 255));
+        trash_Lb.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        trash_Lb.setForeground(new java.awt.Color(255, 255, 255));
+        trash_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-trash-45.png"))); // NOI18N
+        menu_panel.add(trash_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
 
-        javax.swing.GroupLayout menu_new_panelLayout = new javax.swing.GroupLayout(menu_new_panel);
-        menu_new_panel.setLayout(menu_new_panelLayout);
-        menu_new_panelLayout.setHorizontalGroup(
-            menu_new_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menu_new_panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(19, Short.MAX_VALUE))
-        );
-        menu_new_panelLayout.setVerticalGroup(
-            menu_new_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menu_new_panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        menu_panel.add(menu_new_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 65, 60));
-
-        menu_trash_panel.setToolTipText("Trash");
-        menu_trash_panel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menu_trash_panel.setOpaque(false);
-        menu_trash_panel.addMouseListener(new java.awt.event.MouseAdapter() {
+        inbox_Lb.setBackground(new java.awt.Color(102, 204, 255));
+        inbox_Lb.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        inbox_Lb.setForeground(new java.awt.Color(255, 255, 255));
+        inbox_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-chat-message-sent-45.png"))); // NOI18N
+        inbox_Lb.setToolTipText("Mail INBOX");
+        inbox_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menu_trash_panelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                menu_trash_panelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                menu_trash_panelMouseExited(evt);
+                inbox_LbMouseClicked(evt);
             }
         });
-
-        jLabel2.setBackground(new java.awt.Color(102, 204, 255));
-        jLabel2.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-trash-45.png"))); // NOI18N
-
-        javax.swing.GroupLayout menu_trash_panelLayout = new javax.swing.GroupLayout(menu_trash_panel);
-        menu_trash_panel.setLayout(menu_trash_panelLayout);
-        menu_trash_panelLayout.setHorizontalGroup(
-            menu_trash_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menu_trash_panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        menu_trash_panelLayout.setVerticalGroup(
-            menu_trash_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menu_trash_panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        menu_panel.add(menu_trash_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 120, 65, 60));
-
-        menu_mailbox_panel.setToolTipText("Mail Box");
-        menu_mailbox_panel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menu_mailbox_panel.setOpaque(false);
-        menu_mailbox_panel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menu_mailbox_panelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                menu_mailbox_panelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                menu_mailbox_panelMouseExited(evt);
-            }
-        });
-
-        jLabel3.setBackground(new java.awt.Color(102, 204, 255));
-        jLabel3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-chat-message-sent-45.png"))); // NOI18N
-
-        javax.swing.GroupLayout menu_mailbox_panelLayout = new javax.swing.GroupLayout(menu_mailbox_panel);
-        menu_mailbox_panel.setLayout(menu_mailbox_panelLayout);
-        menu_mailbox_panelLayout.setHorizontalGroup(
-            menu_mailbox_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menu_mailbox_panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        menu_mailbox_panelLayout.setVerticalGroup(
-            menu_mailbox_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menu_mailbox_panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        menu_panel.add(menu_mailbox_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 240, 65, 60));
-
-        menu_mailbox_panel1.setToolTipText("Mail Box");
-        menu_mailbox_panel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menu_mailbox_panel1.setOpaque(false);
-        menu_mailbox_panel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menu_mailbox_panel1MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                menu_mailbox_panel1MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                menu_mailbox_panel1MouseExited(evt);
-            }
-        });
+        menu_panel.add(inbox_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
 
         jLabel5.setBackground(new java.awt.Color(102, 204, 255));
         jLabel5.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-upload-mail-40.png"))); // NOI18N
+        menu_panel.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, -1, -1));
 
-        javax.swing.GroupLayout menu_mailbox_panel1Layout = new javax.swing.GroupLayout(menu_mailbox_panel1);
-        menu_mailbox_panel1.setLayout(menu_mailbox_panel1Layout);
-        menu_mailbox_panel1Layout.setHorizontalGroup(
-            menu_mailbox_panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menu_mailbox_panel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5)
-                .addContainerGap(19, Short.MAX_VALUE))
-        );
-        menu_mailbox_panel1Layout.setVerticalGroup(
-            menu_mailbox_panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menu_mailbox_panel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        menu_panel.add(menu_mailbox_panel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 180, 65, 60));
-
-        background_all.add(menu_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 75, 65, 560));
+        background_all.add(menu_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 75, 65, 550));
 
         list_mailbox_panel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -758,7 +586,6 @@ public class index extends javax.swing.JFrame {
         list_mailbox_panel.setLayout(list_mailbox_panelLayout);
         list_mailbox_panelLayout.setHorizontalGroup(
             list_mailbox_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScroll_mailbox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(list_mailbox_panelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(list_mailbox_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -769,12 +596,15 @@ public class index extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(mailbox_reset)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(list_mailbox_panelLayout.createSequentialGroup()
-                        .addComponent(prevLoadMail_Bt)
-                        .addGap(34, 34, 34)
-                        .addComponent(lb_name)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(nextLoadMail_Bt)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, list_mailbox_panelLayout.createSequentialGroup()
+                        .addGroup(list_mailbox_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScroll_mailbox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addGroup(list_mailbox_panelLayout.createSequentialGroup()
+                                .addComponent(prevLoadMail_Bt)
+                                .addGap(34, 34, 34)
+                                .addComponent(lb_name)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(nextLoadMail_Bt)))
                         .addGap(24, 24, 24))))
         );
         list_mailbox_panelLayout.setVerticalGroup(
@@ -797,29 +627,132 @@ public class index extends javax.swing.JFrame {
 
         background_all.add(list_mailbox_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 75, 250, 550));
 
-        logo.setFont(new java.awt.Font("Lucida Console", 1, 24)); // NOI18N
-        logo.setForeground(new java.awt.Color(172, 93, 93));
-        logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logo.png"))); // NOI18N
-        logo.setText("GMAIL");
-        background_all.add(logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 170, -1));
-
-        lb_name_mail.setForeground(new java.awt.Color(255, 255, 255));
+        lb_name_mail.setForeground(new java.awt.Color(0, 51, 51));
         lb_name_mail.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-change-user-45.png"))); // NOI18N
         background_all.add(lb_name_mail, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 20, 210, 30));
 
         background_img.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/FMainMenu.png"))); // NOI18N
         background_img.setText("jLabel1");
-        background_all.add(background_img, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 630));
+        background_all.add(background_img, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -80, 1000, 630));
+
+        optionWriteMail_Pn.setBackground(new java.awt.Color(39, 129, 191));
+        optionWriteMail_Pn.setPreferredSize(new java.awt.Dimension(662, 67));
+        optionWriteMail_Pn.setRequestFocusEnabled(false);
+
+        writeMailSent_Lb.setBackground(new java.awt.Color(39, 129, 191));
+        writeMailSent_Lb.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        writeMailSent_Lb.setForeground(new java.awt.Color(255, 255, 255));
+        writeMailSent_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-sent-35.png"))); // NOI18N
+        writeMailSent_Lb.setText("Sent");
+        writeMailSent_Lb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        writeMailSent_Lb.setOpaque(true);
+        writeMailSent_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                writeMailSent_LbMouseClicked(evt);
+            }
+        });
+
+        writeMailCancel_Lb.setBackground(new java.awt.Color(39, 129, 191));
+        writeMailCancel_Lb.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        writeMailCancel_Lb.setForeground(new java.awt.Color(255, 255, 255));
+        writeMailCancel_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-cancel-35.png"))); // NOI18N
+        writeMailCancel_Lb.setText("Cancel");
+        writeMailCancel_Lb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        writeMailCancel_Lb.setOpaque(true);
+        writeMailCancel_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                writeMailCancel_LbMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                writeMailCancel_LbMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                writeMailCancel_LbMouseExited(evt);
+            }
+        });
+
+        fileChoose_Lb.setBackground(new java.awt.Color(39, 129, 191));
+        fileChoose_Lb.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        fileChoose_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-file-30.png"))); // NOI18N
+        fileChoose_Lb.setText("File ");
+
+        writeMailSelectFile_Bt.setBackground(new java.awt.Color(39, 129, 191));
+        writeMailSelectFile_Bt.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        writeMailSelectFile_Bt.setText("Select file");
+        writeMailSelectFile_Bt.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        writeMailSelectFile_Bt.setOpaque(false);
+        writeMailSelectFile_Bt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                writeMailSelectFile_BtActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout optionWriteMail_PnLayout = new javax.swing.GroupLayout(optionWriteMail_Pn);
+        optionWriteMail_Pn.setLayout(optionWriteMail_PnLayout);
+        optionWriteMail_PnLayout.setHorizontalGroup(
+            optionWriteMail_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionWriteMail_PnLayout.createSequentialGroup()
+                .addComponent(fileChoose_Lb)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(writeMailfileInput_Jcb, 0, 227, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(writeMailSelectFile_Bt)
+                .addGap(18, 18, 18)
+                .addComponent(writeMailCancel_Lb, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(writeMailSent_Lb, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6))
+        );
+        optionWriteMail_PnLayout.setVerticalGroup(
+            optionWriteMail_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(optionWriteMail_PnLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(optionWriteMail_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(optionWriteMail_PnLayout.createSequentialGroup()
+                        .addComponent(writeMailfileInput_Jcb)
+                        .addGap(9, 9, 9))
+                    .addGroup(optionWriteMail_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(writeMailSelectFile_Bt, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(writeMailCancel_Lb)
+                        .addComponent(writeMailSent_Lb)
+                        .addComponent(fileChoose_Lb)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout dynamicOption_PnLayout = new javax.swing.GroupLayout(dynamicOption_Pn);
+        dynamicOption_Pn.setLayout(dynamicOption_PnLayout);
+        dynamicOption_PnLayout.setHorizontalGroup(
+            dynamicOption_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 670, Short.MAX_VALUE)
+            .addGroup(dynamicOption_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(dynamicOption_PnLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(optionWriteMail_Pn, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        dynamicOption_PnLayout.setVerticalGroup(
+            dynamicOption_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 93, Short.MAX_VALUE)
+            .addGroup(dynamicOption_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(dynamicOption_PnLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(optionWriteMail_Pn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        background_all.add(dynamicOption_Pn, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 550, 670, 70));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(background_all, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
+            .addComponent(background_all, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(background_all, javax.swing.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(background_all, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -912,9 +845,8 @@ public class index extends javax.swing.JFrame {
 	panelreset(menu_trash_panel);
 	panelcoler(menu_mailbox_panel);
 	panelreset(menu_new_panel);
-	write_mail_panel.setVisible(false);
 	list_mailbox_panel.setVisible(true);
-	read_mail_panel.setVisible(true);
+	mail_panel.setVisible(true);
 	loadStartUpMailBox();
     }//GEN-LAST:event_menu_mailbox_panelMouseClicked
 
@@ -926,19 +858,18 @@ public class index extends javax.swing.JFrame {
 	// TODO add your handling code here:
 	int chon = list_mailbox.getSelectedIndex();
 	if (chon != -1) {
-	    write_mail_panel.setVisible(false);
-	    read_mail_panel.setVisible(true);
+	    mail_panel.setVisible(true);
 	    panelreset(menu_trash_panel);
 	    panelcoler(menu_mailbox_panel);
 	    panelreset(menu_new_panel);
 	    MessageObject msgOb = messageInbox.get(chon);
 	    MessageProcess.loadMessage(msgOb);
-	    read_mail_from.setText(msgOb.from);
-	    read_mail_to.setText(msgOb.to);
-	    read_mail_cc.setText(msgOb.cc);
-	    read_mail_sub.setText(msgOb.subject);
+	    mail_from.setText(msgOb.from);
+	    mail_to.setText(msgOb.to);
+	    mail_cc.setText(msgOb.cc);
+	    mail_subject.setText(msgOb.subject);
 	    read_mail_date.setText(msgOb.date);
-	    read_mail_content.setText(msgOb.mainText);
+	    mail_content.setText(msgOb.mainText);
 	    // load file len
 	    DefaultComboBoxModel model = new DefaultComboBoxModel();
 	    for (Map.Entry m : msgOb.listFile.entrySet()) {
@@ -946,8 +877,8 @@ public class index extends javax.swing.JFrame {
 	    }
 	    this.read_mail_file_Jcb.setModel(model);
 	    // vo hieu hoa bcc vi reader khong the thay bcc
-	    read_mail_bcc.setEnabled(true);
-	    read_mail_panel.setVisible(true);
+	    mail_bcc.setEnabled(true);
+	    mail_panel.setVisible(true);
 	}
     }//GEN-LAST:event_list_mailboxMouseClicked
 
@@ -965,63 +896,13 @@ public class index extends javax.swing.JFrame {
 	panelreset(menu_trash_panel);
 	panelreset(menu_mailbox_panel);
 	panelcoler(menu_new_panel);
-	read_mail_panel.setVisible(false);
-	write_mail_panel.setVisible(true);
+	mail_panel.setVisible(false);
+
     }//GEN-LAST:event_menu_new_panelMouseClicked
 
-    private void write_mail_toActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_write_mail_toActionPerformed
+    private void mail_toActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mail_toActionPerformed
 	// TODO add your handling code here:
-    }//GEN-LAST:event_write_mail_toActionPerformed
-
-    private void write_mail_select_fileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_write_mail_select_fileActionPerformed
-	// TODO add your handling code here:
-	JFileChooser fileChooser = new JFileChooser();
-	fileChooser.setDialogTitle("Select file");
-	String linkFile;
-	int userSelection = fileChooser.showOpenDialog(this);
-	if (userSelection == JFileChooser.APPROVE_OPTION) {
-	    File fileToOpen = fileChooser.getSelectedFile();
-	    linkFile = fileToOpen.getAbsolutePath();
-	    write_mail_file_name.setText(linkFile);
-	}
-    }//GEN-LAST:event_write_mail_select_fileActionPerformed
-
-    private void write_mail_cancelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_write_mail_cancelMouseClicked
-	// TODO add your handling code here:
-	int ans = JOptionPane.showConfirmDialog(this, "Do you want to save to draft ?");
-	if (ans == JOptionPane.YES_OPTION) {
-	    lb_.setText("File :");
-	    write_mail_bcc.setText("");
-	    write_mail_cc.setText("");
-	    write_mail_sub.setText("");
-	    write_mail_to.setText("");
-	    write_mail_content.setText("");
-	}
-    }//GEN-LAST:event_write_mail_cancelMouseClicked
-
-    private void write_mail_sentMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_write_mail_sentMouseEntered
-	// TODO add your handling code here:
-	labelcolor(write_mail_sent);
-    }//GEN-LAST:event_write_mail_sentMouseEntered
-
-    private void write_mail_cancelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_write_mail_cancelMouseEntered
-	// TODO add your handling code here:
-	labelcolor(write_mail_cancel);
-    }//GEN-LAST:event_write_mail_cancelMouseEntered
-
-    private void write_mail_cancelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_write_mail_cancelMouseExited
-	// TODO add your handling code here:
-	resetlabelcolor(write_mail_cancel);
-    }//GEN-LAST:event_write_mail_cancelMouseExited
-
-    private void write_mail_sentMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_write_mail_sentMouseExited
-	// TODO add your handling code here:
-	resetlabelcolor(write_mail_sent);
-    }//GEN-LAST:event_write_mail_sentMouseExited
-
-    private void read_mail_toActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_read_mail_toActionPerformed
-	// TODO add your handling code here:
-    }//GEN-LAST:event_read_mail_toActionPerformed
+    }//GEN-LAST:event_mail_toActionPerformed
 
     private void read_mail_replyMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_read_mail_replyMouseEntered
 	// TODO add your handling code here:
@@ -1033,14 +914,17 @@ public class index extends javax.swing.JFrame {
 	resetlabelcolor(read_mail_reply);
     }//GEN-LAST:event_read_mail_replyMouseExited
     private void cleanReadMailPanel() {
-	read_mail_from.setText("");
-	read_mail_bcc.setText("");
-	read_mail_cc.setText("");
-	read_mail_sub.setText("");
-	read_mail_to.setText("");
-	read_mail_content.setText("");
+	mail_from.setText("");
+	mail_bcc.setText("");
+	mail_cc.setText("");
+	mail_subject.setText("");
+	mail_to.setText("");
+	mail_content.setText("");
 	read_mail_file_Jcb.removeAllItems();
 	read_mail_date.setText("");
+    }
+
+    private void deleteTheMailToTrash() {
 	int index = list_mailbox.getSelectedIndex();
 	DefaultListModel listMail = (DefaultListModel) list_mailbox.getModel();
 	listMail.remove(index);
@@ -1056,6 +940,7 @@ public class index extends javax.swing.JFrame {
 	    try {
 		MessageProcess.moveToTrash(msgOb.id);
 		cleanReadMailPanel();
+		deleteTheMailToTrash();
 	    } catch (IOException ex) {
 		Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
 	    }
@@ -1072,9 +957,9 @@ public class index extends javax.swing.JFrame {
 	resetlabelcolor(read_mail_trash);
     }//GEN-LAST:event_read_mail_trashMouseExited
 
-    private void read_mail_fromActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_read_mail_fromActionPerformed
+    private void mail_fromActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mail_fromActionPerformed
 	// TODO add your handling code here:
-    }//GEN-LAST:event_read_mail_fromActionPerformed
+    }//GEN-LAST:event_mail_fromActionPerformed
 
     private void read_mail_downloadMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_read_mail_downloadMouseClicked
 	// TODO add your handling code here:
@@ -1126,6 +1011,99 @@ public class index extends javax.swing.JFrame {
 	}
     }//GEN-LAST:event_read_mail_file_JcbActionPerformed
 
+    private void newMail_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_newMail_LbMouseClicked
+	// TODO add your handling code here:
+	cleanReadMailPanel();
+	this.mail_panel.setVisible(true);
+
+	this.optionReadMail_Pn.setVisible(false);
+	this.optionWriteMail_Pn.setVisible(true);
+
+	this.mail_from.setEditable(false);
+	this.mail_from.setText(GlobalVariable.userId);
+	this.read_mail_date.setEditable(false);
+	this.read_mail_date.setText((new Date()).toString());
+	this.mail_to.setEditable(true);
+	this.mail_cc.setEditable(true);
+	this.mail_bcc.setEditable(true);
+	this.mail_subject.setEditable(true);
+	this.mail_content.setEditable(true);
+	this.mail_bcc.setToolTipText("Các mail đặt cách nhau bỏi dấu ';'");
+	this.mail_cc.setToolTipText("Các mail đặt cách nhau bỏi dấu ';'");
+	this.mail_to.setToolTipText("Các mail đặt cách nhau bỏi dấu ';'");
+//	this.optionReadMail_Pn.remove(this.read_mail_trash);
+//	this.optionReadMail_Pn.remove(this.read_mail_reply);
+//	this.write_mail_sent.setVisible(true);
+//	this.write_mail_cancel.setVisible(true);
+//	this.optionReadMail_Pn.add(this.write_mail_sent);
+//	this.optionReadMail_Pn.add(this.write_mail_cancel);
+
+    }//GEN-LAST:event_newMail_LbMouseClicked
+
+    private void writeMailCancel_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_writeMailCancel_LbMouseClicked
+	// TODO add your handling code here:
+    }//GEN-LAST:event_writeMailCancel_LbMouseClicked
+
+    private void writeMailCancel_LbMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_writeMailCancel_LbMouseEntered
+	// TODO add your handling code here:
+    }//GEN-LAST:event_writeMailCancel_LbMouseEntered
+
+    private void writeMailCancel_LbMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_writeMailCancel_LbMouseExited
+	// TODO add your handling code here:
+    }//GEN-LAST:event_writeMailCancel_LbMouseExited
+
+    private void writeMailSelectFile_BtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeMailSelectFile_BtActionPerformed
+	// TODO add your handling code here:
+	String filePath = XuLyFile.showOpenFileDialog();
+	this.writeMailfileInput_Jcb.addItem(filePath);
+    }//GEN-LAST:event_writeMailSelectFile_BtActionPerformed
+
+    private void inbox_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inbox_LbMouseClicked
+	// TODO add your handling code here:
+	cleanReadMailPanel();
+	this.optionReadMail_Pn.setVisible(true);
+	this.optionWriteMail_Pn.setVisible(false);
+    }//GEN-LAST:event_inbox_LbMouseClicked
+
+    private void writeMailSent_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_writeMailSent_LbMouseClicked
+	// TODO add your handling code here:
+	String[] bcc = null;
+	String[] cc = null;
+	String[] to = null;
+	List<String> listFile = null;
+	if (this.mail_to.getText().equals("")) {
+	    JOptionPane.showMessageDialog(this, "Bạn chưa nhập mail người cần nhận ! Xin vui lòng nhập đầy đủ !");
+	} else {
+	    if (!this.mail_bcc.getText().isEmpty()) {
+		bcc = this.mail_bcc.getText().split(";");
+	    }
+	    if (!this.mail_cc.getText().isEmpty()) {
+		cc = this.mail_cc.getText().split(";");
+	    }
+	    if (!this.mail_to.getText().isEmpty()) {
+		to = this.mail_to.getText().split(";");
+	    }
+	    String subject = this.mail_subject.getText();
+	    String mainText = this.mail_content.getText();
+	    int numOfFile = this.writeMailfileInput_Jcb.getItemCount();
+	    if (numOfFile != 0) {
+		listFile = new ArrayList<>();
+		for (int i = 0; i < numOfFile; i++) {
+		    listFile.add(this.writeMailfileInput_Jcb.getItemAt(i));
+		}
+	    }
+	    SendMailProcess newMail = new SendMailProcess(to, cc, bcc, subject, mainText, listFile);
+	    try {
+		newMail.setUpAndSend();
+		JOptionPane.showMessageDialog(this, "Bạn đã gửi mail thành công !");
+		cleanReadMailPanel();
+	    } catch (MessagingException | IOException ex) {
+		Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
+		JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi trong quá trình gửi mail !");
+	    }
+	}
+    }//GEN-LAST:event_writeMailSent_LbMouseClicked
+
     /**
      * * @param args the command line arguments
      */
@@ -1169,40 +1147,38 @@ public class index extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel adddd;
     private javax.swing.JPanel background_all;
     private javax.swing.JLabel background_img;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel date_Lb;
+    private javax.swing.JPanel dynamicOption_Pn;
+    private javax.swing.JLabel fileChoose_Lb;
+    private javax.swing.JLabel inbox_Lb;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScroll_mailbox;
-    private javax.swing.JLabel lb_;
     private javax.swing.JLabel lb_1;
     private javax.swing.JLabel lb_hide_menu;
     private javax.swing.JLabel lb_name;
     public static javax.swing.JLabel lb_name_mail;
-    private javax.swing.JLabel lb_nothing1;
     private javax.swing.JLabel lb_nothing2;
     private javax.swing.JList<MessageObject> list_mailbox;
     private javax.swing.JPanel list_mailbox_panel;
     private javax.swing.JTextField list_mailbox_search;
     private javax.swing.JLabel logo;
+    private javax.swing.JTextField mail_bcc;
+    private javax.swing.JTextField mail_cc;
+    private javax.swing.JTextArea mail_content;
+    private javax.swing.JTextField mail_from;
+    private javax.swing.JPanel mail_panel;
+    private javax.swing.JTextField mail_subject;
+    public javax.swing.JTextField mail_to;
     private javax.swing.JLabel mailbox_reset;
     private javax.swing.JLabel mailbox_search;
     private javax.swing.JPanel menu_mailbox_panel;
@@ -1210,32 +1186,22 @@ public class index extends javax.swing.JFrame {
     private javax.swing.JPanel menu_new_panel;
     private javax.swing.JPanel menu_panel;
     private javax.swing.JPanel menu_trash_panel;
+    private javax.swing.JLabel newMail_Lb;
     private javax.swing.JButton nextLoadMail_Bt;
+    private javax.swing.JPanel optionReadMail_Pn;
+    private javax.swing.JPanel optionWriteMail_Pn;
     private javax.swing.JButton prevLoadMail_Bt;
-    private javax.swing.JTextField read_mail_bcc;
-    private javax.swing.JTextField read_mail_cc;
-    private javax.swing.JTextArea read_mail_content;
     private javax.swing.JTextField read_mail_date;
     private javax.swing.JLabel read_mail_download;
     private javax.swing.JComboBox<String> read_mail_file_Jcb;
     private javax.swing.JTextField read_mail_file_cbx;
-    private javax.swing.JTextField read_mail_from;
-    private javax.swing.JPanel read_mail_panel;
     private javax.swing.JLabel read_mail_reply;
-    private javax.swing.JTextField read_mail_sub;
-    public static javax.swing.JTextField read_mail_to;
     private javax.swing.JLabel read_mail_trash;
-    private javax.swing.JTextField write_mail_bcc;
-    private javax.swing.JLabel write_mail_cancel;
-    private javax.swing.JTextField write_mail_cc;
-    private javax.swing.JTextArea write_mail_content;
-    private javax.swing.JTextField write_mail_file_name;
-    public static javax.swing.JTextField write_mail_from;
-    private javax.swing.JPanel write_mail_panel;
-    private javax.swing.JButton write_mail_select_file;
-    private javax.swing.JLabel write_mail_sent;
-    private javax.swing.JTextField write_mail_sub;
-    private javax.swing.JTextField write_mail_to;
+    private javax.swing.JLabel trash_Lb;
+    private javax.swing.JLabel writeMailCancel_Lb;
+    private javax.swing.JButton writeMailSelectFile_Bt;
+    private javax.swing.JLabel writeMailSent_Lb;
+    private javax.swing.JComboBox<String> writeMailfileInput_Jcb;
     // End of variables declaration//GEN-END:variables
     private void labelcolor(JLabel label) {
 	label.setBackground(new java.awt.Color(53, 162, 107));

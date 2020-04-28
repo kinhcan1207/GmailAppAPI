@@ -50,7 +50,7 @@ public class Init {
 	loadFromLabel.add("INBOX");
 	List<MessageObject> listMessages = new ArrayList<>();
 	try {
-	    List<Message> initListMessages = MessageProcess.getListMail(loadFromLabel);
+	    List<Message> initListMessages = MessageProcess.getListMail(loadFromLabel,13);
 	    for (Message msg : initListMessages) {
 		MessageObject newMessOb = new MessageObject();
 		newMessOb.id = msg.getId();

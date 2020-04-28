@@ -42,8 +42,8 @@ public class XuLyFile {
     }
 
     /**
-     * Mở 1 hộp thoại cho chọn đường dẫn
-     * @return
+     * Mở 1 hộp thoại cho chọn đường dẫn thư mục để lưu
+     * @return đường dẫn tuyệt đối đến thư mục
      */
     public static String showOpenDirDialog() {
 	JFileChooser fileChooser = new JFileChooser();
@@ -55,5 +55,21 @@ public class XuLyFile {
 	    dirPath = fileChooser.getSelectedFile().toString();
 	}
 	return (dirPath + "/");
+    }
+    
+    /**
+     * Mở 1 hộp thoại chọn file cần gắn vào mail
+     * @return trả về đường dẫn tuyệt đối đến file đã chọn
+     */
+    public static String showOpenFileDialog() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn file");
+        String linkFile=null;
+        int userSelection = fileChooser.showOpenDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToOpen = fileChooser.getSelectedFile();
+            linkFile = fileToOpen.getAbsolutePath();
+        }
+	return linkFile;
     }
 }
