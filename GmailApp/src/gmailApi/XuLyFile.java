@@ -53,8 +53,9 @@ public class XuLyFile {
 	int userSelection = fileChooser.showOpenDialog(null);
 	if (userSelection == JFileChooser.APPROVE_OPTION) {
 	    dirPath = fileChooser.getSelectedFile().toString();
+	    return (dirPath + "/");
 	}
-	return (dirPath + "/");
+	return "";
     }
     
     /**
@@ -69,7 +70,8 @@ public class XuLyFile {
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToOpen = fileChooser.getSelectedFile();
             linkFile = fileToOpen.getAbsolutePath();
+	    return linkFile;
         }
-	return linkFile;
+	return "";
     }
 }

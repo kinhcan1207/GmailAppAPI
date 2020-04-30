@@ -76,7 +76,7 @@ public class MessageProcess {
 	List<Message> messages = new ArrayList<>();
 	messages.addAll(response.getMessages());
 //	while (response.getMessages() != null) {
-	    
+//	    messages.addAll(response.getMessages());
 //	    if (response.getNextPageToken() != null) {
 //		String pageToken = response.getNextPageToken();
 //		response = service.users().messages().list(userId).setLabelIds(loadFromLabel).setPageToken(pageToken).execute();

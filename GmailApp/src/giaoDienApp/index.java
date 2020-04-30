@@ -67,7 +67,7 @@ public class index extends javax.swing.JFrame {
 	mail_panel.setVisible(false);
 
     }
-    List<MessageObject> messageInbox;
+    public List<MessageObject> messageInbox;
 //    ArrayList<MessageObject> demo = new ArrayList<>();    
 //    MessageObject demo1 = new MessageObject("Tuan@gmail.com", "Deadline", "2 tuan truoc thi !", "20/03/2020", "tuan");                                       //đổ dữ liệu để test thôi
 //    MessageObject demo2 = new MessageObject("Thom@gmail.com", "Hello ", "How are you to day", "10/04/2020", "thom");                                         //
@@ -580,6 +580,7 @@ public class index extends javax.swing.JFrame {
 
         prevLoadMail_Bt.setText("<");
 
+        nextLoadMail_Bt.setBackground(new java.awt.Color(39, 129, 191));
         nextLoadMail_Bt.setText(">");
 
         javax.swing.GroupLayout list_mailbox_panelLayout = new javax.swing.GroupLayout(list_mailbox_panel);
@@ -1116,6 +1117,7 @@ public class index extends javax.swing.JFrame {
 	try {
 	    for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
 		if ("Nimbus".equals(info.getName())) {
+		    // nimbus = windows: java ui ux
 		    javax.swing.UIManager.setLookAndFeel(info.getClassName());
 		    break;
 		}
