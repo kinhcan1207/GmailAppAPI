@@ -32,7 +32,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\add_file_30px.png"/>
+              <Image iconType="3" name="/img/add_file_30px.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="File"/>
           </Properties>
@@ -47,9 +47,11 @@
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="0"/>
             </Property>
+            <Property name="toolTipText" type="java.lang.String" value="B&#x1ea1;n c&#xf3; th&#x1ec3; ch&#x1ecd;n file c&#x1ea7;n xo&#xe1; v&#xe0; &#x1ea5;n Delete &#x111;&#x1ec3; xo&#xe1; file !"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fileAttachWrite_JcbActionPerformed"/>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="fileAttachWrite_JcbKeyPressed"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -90,7 +92,7 @@
             </Property>
             <Property name="horizontalAlignment" type="int" value="4"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\cancel_30px.png"/>
+              <Image iconType="3" name="/img/cancel_30px.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value=" Cancel"/>
           </Properties>
@@ -109,7 +111,7 @@
               <Color blue="cc" green="cc" red="cc" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\sent_30px.png"/>
+              <Image iconType="3" name="/img/sent_30px.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value=" Send"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -154,7 +156,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\attach_30px.png"/>
+              <Image iconType="3" name="/img/attach_30px.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="File"/>
           </Properties>
@@ -185,7 +187,7 @@
         <Component class="javax.swing.JLabel" name="downMail_Lb">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\download_30px.png"/>
+              <Image iconType="3" name="/img/download_30px.png"/>
             </Property>
           </Properties>
           <Events>
@@ -200,7 +202,7 @@
         <Component class="javax.swing.JLabel" name="moveToTrash_Lb">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\remove_30px.png"/>
+              <Image iconType="3" name="/img/remove_30px.png"/>
             </Property>
           </Properties>
           <Constraints>
@@ -212,7 +214,7 @@
         <Component class="javax.swing.JLabel" name="reply_Lb">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\reply_30px.png"/>
+              <Image iconType="3" name="/img/reply_30px.png"/>
             </Property>
           </Properties>
           <Constraints>
@@ -271,7 +273,7 @@
         <Component class="javax.swing.JLabel" name="menu_Lb">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\menu_30px.png"/>
+              <Image iconType="3" name="/img/menu_30px.png"/>
             </Property>
           </Properties>
           <Constraints>
@@ -283,7 +285,7 @@
         <Component class="javax.swing.JLabel" name="newMail_Lb">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\add_mail_50px.png"/>
+              <Image iconType="3" name="/img/add_mail_50px.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="T&#x1ea1;o v&#xe0; g&#x1eed;i mail m&#x1edb;i"/>
           </Properties>
@@ -299,7 +301,7 @@
         <Component class="javax.swing.JLabel" name="boxMail_Lb">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\mailer_50px.png"/>
+              <Image iconType="3" name="/img/mailer_50px.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Xem h&#x1ed9;p th&#x1b0; &#x111;&#x1ebf;n"/>
           </Properties>
@@ -315,7 +317,7 @@
         <Component class="javax.swing.JLabel" name="trashMail_Lb">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\icons8_trash_48.png"/>
+              <Image iconType="3" name="/img/icons8_trash_48.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Xem h&#x1ed9;p th&#x1b0; r&#xe1;c"/>
           </Properties>
@@ -325,13 +327,16 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
+        <Component class="javax.swing.JLabel" name="logout_Lb">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\logout_50px.png"/>
+              <Image iconType="3" name="/img/logout_50px.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="&#x110;&#x103;ng xu&#x1ea5;t"/>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="logout_LbMouseClicked"/>
+          </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="12" y="777" width="-1" height="-1"/>
@@ -671,7 +676,7 @@
         <Component class="javax.swing.JLabel" name="searchIcon_Lb">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\search_32px.png"/>
+              <Image iconType="3" name="/img/search_32px.png"/>
             </Property>
           </Properties>
           <Constraints>
@@ -713,7 +718,7 @@
               <Font name="Consolas" size="18" style="1"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\icons8_user_24px.png"/>
+              <Image iconType="3" name="/img/icons8_user_24px.png"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -798,7 +803,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="0" y="0" width="170" height="60"/>
+              <AbsoluteConstraints x="0" y="0" width="110" height="60"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -809,12 +814,12 @@
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\reset_30px.png"/>
+              <Image iconType="3" name="/img/reset_30px.png"/>
             </Property>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="170" y="0" width="100" height="50"/>
+              <AbsoluteConstraints x="210" y="0" width="60" height="50"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -827,6 +832,18 @@
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="0" y="50" width="270" height="10"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JLabel" name="soLuongMailBoxDangLoad_Lb">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Consolas" size="20" style="0"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="120" y="10" width="60" height="40"/>
             </Constraint>
           </Constraints>
         </Component>

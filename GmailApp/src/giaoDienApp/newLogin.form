@@ -232,7 +232,7 @@
         <Component class="javax.swing.JLabel" name="logo_Lb">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\School\CNPM\logo2.png"/>
+              <Image iconType="3" name="/img/logo2.png"/>
             </Property>
           </Properties>
           <Constraints>
@@ -279,7 +279,7 @@
     <Component class="javax.swing.JLabel" name="backgroundLeft_Lb">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="2" name="D:\School\CNPM\left4.jpg"/>
+          <Image iconType="2" name="D:\School\CNPM\GmailAppAPI\GmailApp\src\img\left4.jpg"/>
         </Property>
         <Property name="text" type="java.lang.String" value="jLabel3"/>
       </Properties>

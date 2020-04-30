@@ -8,6 +8,7 @@ package giaoDienApp;
 import customException.FailToLoadInitInboxException;
 import gmailApi.GlobalVariable;
 import gmailApi.Init;
+import static gmailApi.LoginProcess.checkMail;
 import gmailApi.MessageObject;
 import gmailApi.MessageProcess;
 import gmailApi.SendMailProcess;
@@ -41,8 +42,9 @@ public class newMainPage extends javax.swing.JFrame {
     GridBagLayout layout = new GridBagLayout();
 //    ReadMailOption_Pn readMail_pn = new ReadMailOption_Pn(messageInbox);
 //    WriteMailOption_Pn writeMail_pn = new WriteMailOption_Pn();
-
-    public newMainPage() {
+    private newLogin parentFrame;
+    public newMainPage(newLogin parentFrame) {
+	this.parentFrame = parentFrame;
 	initComponents();
 //	ReadMailOption_Pn readMail_Pn = new ReadMailOption_Pn();
 	readMail_Pn.setSize(870, 60);
@@ -88,7 +90,7 @@ public class newMainPage extends javax.swing.JFrame {
         newMail_Lb = new javax.swing.JLabel();
         boxMail_Lb = new javax.swing.JLabel();
         trashMail_Lb = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        logout_Lb = new javax.swing.JLabel();
         mail_Pn = new javax.swing.JPanel();
         from_Lb = new javax.swing.JLabel();
         from_Tf = new javax.swing.JTextField();
@@ -122,6 +124,7 @@ public class newMainPage extends javax.swing.JFrame {
         loadingBoxName_Lb = new javax.swing.JLabel();
         refresh_Lb = new javax.swing.JLabel();
         jSeparator8 = new javax.swing.JSeparator();
+        soLuongMailBoxDangLoad_Lb = new javax.swing.JLabel();
         dynamic_option_read_writeMenu_Pn = new javax.swing.JPanel();
 
         writeMail_Pn.setBackground(new java.awt.Color(34, 92, 145));
@@ -132,13 +135,19 @@ public class newMainPage extends javax.swing.JFrame {
 
         fileAttachWrite_Lb.setFont(new java.awt.Font("Verdana", 1, 18)); // NOI18N
         fileAttachWrite_Lb.setForeground(new java.awt.Color(255, 255, 255));
-        fileAttachWrite_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\add_file_30px.png")); // NOI18N
+        fileAttachWrite_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add_file_30px.png"))); // NOI18N
         fileAttachWrite_Lb.setText("File");
         writeMail_Pn.add(fileAttachWrite_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 90, 40));
 
+        fileAttachWrite_Jcb.setToolTipText("Bạn có thể chọn file cần xoá và ấn Delete để xoá file !");
         fileAttachWrite_Jcb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fileAttachWrite_JcbActionPerformed(evt);
+            }
+        });
+        fileAttachWrite_Jcb.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                fileAttachWrite_JcbKeyPressed(evt);
             }
         });
         writeMail_Pn.add(fileAttachWrite_Jcb, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 10, 280, 40));
@@ -156,13 +165,13 @@ public class newMainPage extends javax.swing.JFrame {
         cancel_Lb.setFont(new java.awt.Font("Consolas", 1, 26)); // NOI18N
         cancel_Lb.setForeground(new java.awt.Color(204, 204, 204));
         cancel_Lb.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        cancel_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\cancel_30px.png")); // NOI18N
+        cancel_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/cancel_30px.png"))); // NOI18N
         cancel_Lb.setText(" Cancel");
         writeMail_Pn.add(cancel_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 10, -1, 40));
 
         send_Lb.setFont(new java.awt.Font("Consolas", 1, 26)); // NOI18N
         send_Lb.setForeground(new java.awt.Color(204, 204, 204));
-        send_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\sent_30px.png")); // NOI18N
+        send_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/sent_30px.png"))); // NOI18N
         send_Lb.setText(" Send");
         send_Lb.setToolTipText("");
         send_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -179,7 +188,7 @@ public class newMainPage extends javax.swing.JFrame {
 
         fileAttachRead_Lb.setFont(new java.awt.Font("Verdana", 1, 18)); // NOI18N
         fileAttachRead_Lb.setForeground(new java.awt.Color(255, 255, 255));
-        fileAttachRead_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\attach_30px.png")); // NOI18N
+        fileAttachRead_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/attach_30px.png"))); // NOI18N
         fileAttachRead_Lb.setText("File");
         readMail_Pn.add(fileAttachRead_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 70, 40));
 
@@ -190,7 +199,7 @@ public class newMainPage extends javax.swing.JFrame {
         });
         readMail_Pn.add(fileAttachRead_Jcb, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 300, 40));
 
-        downMail_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\download_30px.png")); // NOI18N
+        downMail_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/download_30px.png"))); // NOI18N
         downMail_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 downMail_LbMouseClicked(evt);
@@ -198,10 +207,10 @@ public class newMainPage extends javax.swing.JFrame {
         });
         readMail_Pn.add(downMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 10, -1, 40));
 
-        moveToTrash_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\remove_30px.png")); // NOI18N
+        moveToTrash_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/remove_30px.png"))); // NOI18N
         readMail_Pn.add(moveToTrash_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 10, -1, 40));
 
-        reply_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\reply_30px.png")); // NOI18N
+        reply_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/reply_30px.png"))); // NOI18N
         readMail_Pn.add(reply_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 20, -1, -1));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -212,10 +221,10 @@ public class newMainPage extends javax.swing.JFrame {
         menu_Pn.setBackground(new java.awt.Color(34, 92, 145));
         menu_Pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        menu_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\menu_30px.png")); // NOI18N
+        menu_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/menu_30px.png"))); // NOI18N
         menu_Pn.add(menu_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 13, -1, -1));
 
-        newMail_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\add_mail_50px.png")); // NOI18N
+        newMail_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add_mail_50px.png"))); // NOI18N
         newMail_Lb.setToolTipText("Tạo và gửi mail mới");
         newMail_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -224,7 +233,7 @@ public class newMainPage extends javax.swing.JFrame {
         });
         menu_Pn.add(newMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 110, -1, -1));
 
-        boxMail_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\mailer_50px.png")); // NOI18N
+        boxMail_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/mailer_50px.png"))); // NOI18N
         boxMail_Lb.setToolTipText("Xem hộp thư đến");
         boxMail_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -233,13 +242,18 @@ public class newMainPage extends javax.swing.JFrame {
         });
         menu_Pn.add(boxMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 212, -1, 38));
 
-        trashMail_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\icons8_trash_48.png")); // NOI18N
+        trashMail_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_trash_48.png"))); // NOI18N
         trashMail_Lb.setToolTipText("Xem hộp thư rác");
         menu_Pn.add(trashMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 301, -1, -1));
 
-        jLabel2.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\logout_50px.png")); // NOI18N
-        jLabel2.setToolTipText("Đăng xuất");
-        menu_Pn.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 777, -1, -1));
+        logout_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logout_50px.png"))); // NOI18N
+        logout_Lb.setToolTipText("Đăng xuất");
+        logout_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                logout_LbMouseClicked(evt);
+            }
+        });
+        menu_Pn.add(logout_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 777, -1, -1));
 
         getContentPane().add(menu_Pn, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 70, 840));
 
@@ -351,7 +365,7 @@ public class newMainPage extends javax.swing.JFrame {
         topMenu_Pn.setBackground(new java.awt.Color(255, 255, 255));
         topMenu_Pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        searchIcon_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\search_32px.png")); // NOI18N
+        searchIcon_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/search_32px.png"))); // NOI18N
         topMenu_Pn.add(searchIcon_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
 
         search_Tf.setBorder(null);
@@ -366,7 +380,7 @@ public class newMainPage extends javax.swing.JFrame {
         topMenu_Pn.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 40, 210, 10));
 
         loginingUser_Lb.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
-        loginingUser_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\icons8_user_24px.png")); // NOI18N
+        loginingUser_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_user_24px.png"))); // NOI18N
         topMenu_Pn.add(loginingUser_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 20, 270, 30));
 
         jLabel1.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\delete_30px.png")); // NOI18N
@@ -396,15 +410,18 @@ public class newMainPage extends javax.swing.JFrame {
         loadingBoxName_Lb.setFont(new java.awt.Font("Consolas", 1, 24)); // NOI18N
         loadingBoxName_Lb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         loadingBoxName_Lb.setText("Mailbox");
-        mailBox_Pn.add(loadingBoxName_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 170, 60));
+        mailBox_Pn.add(loadingBoxName_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 110, 60));
 
         refresh_Lb.setBackground(new java.awt.Color(255, 255, 255));
         refresh_Lb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        refresh_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\reset_30px.png")); // NOI18N
-        mailBox_Pn.add(refresh_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 0, 100, 50));
+        refresh_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/reset_30px.png"))); // NOI18N
+        mailBox_Pn.add(refresh_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 0, 60, 50));
 
         jSeparator8.setForeground(new java.awt.Color(0, 0, 0));
         mailBox_Pn.add(jSeparator8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 270, 10));
+
+        soLuongMailBoxDangLoad_Lb.setFont(new java.awt.Font("Consolas", 0, 20)); // NOI18N
+        mailBox_Pn.add(soLuongMailBoxDangLoad_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 10, 60, 40));
 
         getContentPane().add(mailBox_Pn, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 60, 270, 780));
 
@@ -449,7 +466,7 @@ public class newMainPage extends javax.swing.JFrame {
 	this.boxMail_Jlist.setVisible(false);
 	this.writeMail_Pn.setVisible(true);
 	this.readMail_Pn.setVisible(false);
-	
+
 	this.from_Tf.setEditable(false);
 	this.from_Tf.setText(GlobalVariable.userId);
 	this.date_Tf.setEditable(false);
@@ -501,88 +518,114 @@ public class newMainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_boxMail_JlistMouseClicked
 
     private void fileAttachWrite_JcbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileAttachWrite_JcbActionPerformed
-        // TODO add your handling code here:
+	// TODO add your handling code here:
     }//GEN-LAST:event_fileAttachWrite_JcbActionPerformed
 
     private void addFileWrite_BtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addFileWrite_BtActionPerformed
-        // TODO add your handling code here:
-        String filePath = XuLyFile.showOpenFileDialog();
-        this.fileAttachWrite_Jcb.addItem(filePath);
+	// TODO add your handling code here:
+	String filePath = XuLyFile.showOpenFileDialog();
+	this.fileAttachWrite_Jcb.addItem(filePath);
     }//GEN-LAST:event_addFileWrite_BtActionPerformed
 
     private void send_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_send_LbMouseClicked
-        // TODO add your handling code here:
-        clickSentMail();
-	this.fileAttachWrite_Jcb.removeAllItems();
+	// TODO add your handling code here:
+	if (checkMail(this.to_Tf.getText()) == true) {
+	    clickSentMail();
+	    this.fileAttachWrite_Jcb.removeAllItems();
+	} else {
+	    JOptionPane.showMessageDialog(this, "Bạn vừa nhập sai format mail của người nhận! Vui lòng kiểm tra kĩ !");
+	}
     }//GEN-LAST:event_send_LbMouseClicked
 
     private void fileAttachRead_JcbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileAttachRead_JcbActionPerformed
-        // TODO add your handling code here:
-        String pathDir = XuLyFile.showOpenDirDialog();
-	if(pathDir.equals("")) return;
+	// TODO add your handling code here:
+	String pathDir = XuLyFile.showOpenDirDialog();
+	if (pathDir.equals("")) {
+	    return;
+	}
 	try {
-            // TODO add your handling code here:
-            
-            String fileName = (String) this.fileAttachRead_Jcb.getSelectedItem();
-            String fileAttId;
-            int chon = this.fileAttachRead_Jcb.getSelectedIndex();
-            MessageObject msgOb = messageInbox.get(chon);
-            fileAttId = msgOb.listFile.get(fileName);
-            MessageProcess.downloadAttach(msgOb.id, fileAttId, pathDir + fileName);
-        } catch (IOException ex) {
-            Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
-        }
+	    // TODO add your handling code here:
+
+	    String fileName = (String) this.fileAttachRead_Jcb.getSelectedItem();
+	    String fileAttId;
+	    int chon = this.fileAttachRead_Jcb.getSelectedIndex();
+	    MessageObject msgOb = messageInbox.get(chon);
+	    fileAttId = msgOb.listFile.get(fileName);
+	    MessageProcess.downloadAttach(msgOb.id, fileAttId, pathDir + fileName);
+	} catch (IOException ex) {
+	    Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
+	}
     }//GEN-LAST:event_fileAttachRead_JcbActionPerformed
 
     private void downMail_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_downMail_LbMouseClicked
-        // TODO add your handling code here:
-        String pathDir = XuLyFile.showOpenDirDialog();
-	if(pathDir.equals("")) return;
-        int chon = this.boxMail_Jlist.getSelectedIndex();
-        MessageObject msgOb = messageInbox.get(chon);
-        MessageProcess.saveMail(msgOb, pathDir);
+	// TODO add your handling code here:
+	String pathDir = XuLyFile.showOpenDirDialog();
+	if (pathDir.equals("")) {
+	    return;
+	}
+	int chon = this.boxMail_Jlist.getSelectedIndex();
+	MessageObject msgOb = messageInbox.get(chon);
+	MessageProcess.saveMail(msgOb, pathDir);
     }//GEN-LAST:event_downMail_LbMouseClicked
 
     private void search_TfKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search_TfKeyPressed
-        // TODO add your handling code here:
-	if(evt.getKeyCode()==KeyEvent.VK_ENTER) System.out.println("Đang tìm kiếm");	
+	// TODO add your handling code here:
+	if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+	    System.out.println("Đang tìm kiếm");
+	    int selectedIndex = this.fileAttachWrite_Jcb.getSelectedIndex();
+	    this.fileAttachWrite_Jcb.remove(selectedIndex);
+	}
     }//GEN-LAST:event_search_TfKeyPressed
+
+    private void fileAttachWrite_JcbKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fileAttachWrite_JcbKeyPressed
+	// TODO add your handling code here:
+	if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
+	    System.out.println("delete");
+	}
+    }//GEN-LAST:event_fileAttachWrite_JcbKeyPressed
+
+    private void logout_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logout_LbMouseClicked
+	// TODO add your handling code here:
+	int showConfirmDialog = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn Đăng xuất: "+GlobalVariable.userId+" không?");
+	if(showConfirmDialog==JOptionPane.YES_OPTION) this.dispose();
+	parentFrame.setVisible(true);
+    }//GEN-LAST:event_logout_LbMouseClicked
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-	/* Set the Nimbus look and feel */
-	//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-	/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-	 */
-	try {
-	    for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-		if ("Nimbus".equals(info.getName())) {
-		    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-		    break;
-		}
-	    }
-	} catch (ClassNotFoundException ex) {
-	    java.util.logging.Logger.getLogger(newMainPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-	} catch (InstantiationException ex) {
-	    java.util.logging.Logger.getLogger(newMainPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-	} catch (IllegalAccessException ex) {
-	    java.util.logging.Logger.getLogger(newMainPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-	} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-	    java.util.logging.Logger.getLogger(newMainPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-	}
-	//</editor-fold>
-	//</editor-fold>
-
-	/* Create and display the form */
-	java.awt.EventQueue.invokeLater(new Runnable() {
-	    public void run() {
-		new newMainPage().setVisible(true);
-	    }
-	});
-    }
+//    public static void main(String args[]) {
+//	/* Set the Nimbus look and feel */
+//	//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//	/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//	 */
+//	try {
+//	    for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//		if ("Nimbus".equals(info.getName())) {
+//		    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//		    break;
+//		}
+//	    }
+//	} catch (ClassNotFoundException ex) {
+//	    java.util.logging.Logger.getLogger(newMainPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//	} catch (InstantiationException ex) {
+//	    java.util.logging.Logger.getLogger(newMainPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//	} catch (IllegalAccessException ex) {
+//	    java.util.logging.Logger.getLogger(newMainPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//	} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//	    java.util.logging.Logger.getLogger(newMainPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//	}
+//	//</editor-fold>
+//	//</editor-fold>
+//
+//	/* Create and display the form */
+//	java.awt.EventQueue.invokeLater(new Runnable() {
+//	    public void run() {
+//		new newMainPage().setVisible(true);
+//	    }
+//	});
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addFileWrite_Bt;
@@ -604,7 +647,6 @@ public class newMainPage extends javax.swing.JFrame {
     private javax.swing.JLabel from_Lb;
     private javax.swing.JTextField from_Tf;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
@@ -617,6 +659,7 @@ public class newMainPage extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator8;
     private javax.swing.JLabel loadingBoxName_Lb;
     public static javax.swing.JLabel loginingUser_Lb;
+    private javax.swing.JLabel logout_Lb;
     private javax.swing.JPanel mailBox_Pn;
     private javax.swing.JPanel mail_Pn;
     private javax.swing.JTextArea mainText_Tarea;
@@ -630,6 +673,7 @@ public class newMainPage extends javax.swing.JFrame {
     private javax.swing.JLabel searchIcon_Lb;
     private javax.swing.JTextField search_Tf;
     private javax.swing.JLabel send_Lb;
+    private javax.swing.JLabel soLuongMailBoxDangLoad_Lb;
     private javax.swing.JLabel subject_Lb;
     private javax.swing.JTextField subject_Tf;
     private javax.swing.JLabel to_Lb;
@@ -638,8 +682,6 @@ public class newMainPage extends javax.swing.JFrame {
     private javax.swing.JLabel trashMail_Lb;
     private javax.swing.JPanel writeMail_Pn;
     // End of variables declaration//GEN-END:variables
-
-    
 
     private void loadStartUpMailBox() {
 	if (GlobalVariable.internetOn = true) {
@@ -672,7 +714,7 @@ public class newMainPage extends javax.swing.JFrame {
 	date_Tf.setText("");
     }
 
-    public void clickSentMail(){
+    public void clickSentMail() {
 	String[] bcc = null;
 	String[] cc = null;
 	String[] to = null;

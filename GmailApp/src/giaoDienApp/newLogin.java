@@ -10,6 +10,7 @@ import gmailApi.CheckInternetConnection;
 import gmailApi.GlobalVariable;
 import gmailApi.Init;
 import gmailApi.LoginProcess;
+import static gmailApi.LoginProcess.checkMail;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
@@ -144,7 +145,7 @@ public class newLogin extends javax.swing.JFrame {
 
         overlap_Pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        logo_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\logo2.png")); // NOI18N
+        logo_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logo2.png"))); // NOI18N
         overlap_Pn.add(logo_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 120, -1, 160));
 
         quotes_Lb.setFont(new java.awt.Font("Castellar", 1, 18)); // NOI18N
@@ -160,7 +161,7 @@ public class newLogin extends javax.swing.JFrame {
 
         getContentPane().add(overlap_Pn, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 410, 600));
 
-        backgroundLeft_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\left4.jpg")); // NOI18N
+        backgroundLeft_Lb.setIcon(new javax.swing.ImageIcon("D:\\School\\CNPM\\GmailAppAPI\\GmailApp\\src\\img\\left4.jpg")); // NOI18N
         backgroundLeft_Lb.setText("jLabel3");
         getContentPane().add(backgroundLeft_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 410, 600));
 
@@ -183,7 +184,7 @@ public class newLogin extends javax.swing.JFrame {
 	if (this.savedToken_Jcb.getSelectedItem().toString().equals(GlobalVariable.userId)) {
 	    GlobalVariable.save = 1;							 //nếu có trả về 1, không trả về 0
 	}
-	if (checkmail() == 1) {
+	if (checkMail(this.userNameInput_Tf.getText()) == false) {
 	    failFormatMail_Lb.setVisible(true);
 	} else {
 	    try {
@@ -198,7 +199,7 @@ public class newLogin extends javax.swing.JFrame {
 		    try {
 			LoginProcess.login();
 			this.setVisible(false);
-			newMainPage mainPage = new newMainPage();
+			newMainPage mainPage = new newMainPage(this);
 			newMainPage.loginingUser_Lb.setText(GlobalVariable.userId);
 			mainPage.setVisible(true);
 		    } catch (WrongLoginInfoException ex) {
@@ -208,7 +209,7 @@ public class newLogin extends javax.swing.JFrame {
 //		    JOptionPane.showMessageDialog(this, "Không thể truy cập mạng, bạn chỉ có thể đăng nhập với những tài khoản đã lưu!");
 		    if (this.savedToken_Jcb.getSelectedItem().toString().equals(GlobalVariable.userId)) {
 			this.setVisible(false);
-			newMainPage mainPage = new newMainPage();
+			newMainPage mainPage = new newMainPage(this);
 			newMainPage.loginingUser_Lb.setText(GlobalVariable.userId);
 			mainPage.setVisible(true);
 		    }
@@ -231,19 +232,7 @@ public class newLogin extends javax.swing.JFrame {
         // TODO add your handling code here:
 	this.failFormatMail_Lb.setVisible(false);
     }//GEN-LAST:event_userNameInput_TfMouseClicked
-    public int checkmail() {
-	try {
-	    String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-		    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-	    String email = this.userNameInput_Tf.getText();
-	    if (email.matches(pattern)) {
-		return 0;
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-	return 1;
-    }
+
     private void initJCBoxLoadSaveToken() {
 	List<String> listSaveToken = Init.initSaveTokens();
 	this.savedToken_Jcb.addItem("");

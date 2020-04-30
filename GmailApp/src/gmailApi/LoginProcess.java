@@ -135,4 +135,23 @@ public class LoginProcess {
 	deleteFolder.deleteOnExit();
 	deleteFile.deleteOnExit();
     }
+    
+    /**
+     * kiểm tra email có được nhập đúng format không
+     * @param email
+     * @return
+     */
+    public static boolean checkMail(String email) {
+	try {
+	    String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+		    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+//	    String email = this.userNameInput_Tf.getText();
+	    if (email.matches(pattern)) {
+		return true;
+	    }
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+	return false;
+    }
 }
