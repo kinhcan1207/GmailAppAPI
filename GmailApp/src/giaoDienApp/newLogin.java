@@ -12,6 +12,8 @@ import gmailApi.Init;
 import gmailApi.LoginProcess;
 import static gmailApi.LoginProcess.checkMail;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -28,7 +30,7 @@ public class newLogin extends javax.swing.JFrame {
     public newLogin() {
 	initComponents();
 	this.failFormatMail_Lb.setVisible(false);
-	this.overlap_Pn.setBackground(new Color(0,0,0,200));
+	this.overlap_Pn.setBackground(new Color(0, 0, 0, 200));
 	this.initJCBoxLoadSaveToken();
     }
 
@@ -106,9 +108,19 @@ public class newLogin extends javax.swing.JFrame {
         savedToken_Jcb.setBackground(new java.awt.Color(161, 233, 237));
         savedToken_Jcb.setFont(new java.awt.Font("Consolas", 1, 16)); // NOI18N
         savedToken_Jcb.setBorder(null);
+        savedToken_Jcb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                savedToken_JcbMouseClicked(evt);
+            }
+        });
         savedToken_Jcb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 savedToken_JcbActionPerformed(evt);
+            }
+        });
+        savedToken_Jcb.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                savedToken_JcbKeyPressed(evt);
             }
         });
         login_Pn.add(savedToken_Jcb, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 280, 330, 40));
@@ -169,16 +181,16 @@ public class newLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void save_ChbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_ChbActionPerformed
-        // TODO add your handling code here:
+	// TODO add your handling code here:
     }//GEN-LAST:event_save_ChbActionPerformed
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        // TODO add your handling code here:
+	// TODO add your handling code here:
 	System.exit(0);
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void login_BtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_login_BtActionPerformed
-        // TODO add your handling code here:
+	// TODO add your handling code here:
 	GlobalVariable.userId = this.userNameInput_Tf.getText();
 	GlobalVariable.save = this.save_Chb.isSelected() ? 1 : 0; // kiểm tra xem cb_remember có được tick vào hay không
 	if (this.savedToken_Jcb.getSelectedItem().toString().equals(GlobalVariable.userId)) {
@@ -192,8 +204,9 @@ public class newLogin extends javax.swing.JFrame {
 		GlobalVariable.internetOn = true;
 	    } catch (IOException ex) {
 		GlobalVariable.internetOn = false;
-		if (this.savedToken_Jcb.getSelectedItem().toString().equals(GlobalVariable.userId)==false) 
+		if (this.savedToken_Jcb.getSelectedItem().toString().equals(GlobalVariable.userId) == false) {
 		    JOptionPane.showMessageDialog(this, "Không thể truy cập mạng, bạn chỉ có thể đăng nhập với những tài khoản đã lưu!");
+		}
 	    } finally {
 		if (GlobalVariable.internetOn) {
 		    try {
@@ -219,19 +232,44 @@ public class newLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_login_BtActionPerformed
 
     private void savedToken_JcbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_savedToken_JcbActionPerformed
-        // TODO add your handling code here:
+	// TODO add your handling code here:
 	this.userNameInput_Tf.setText(this.savedToken_Jcb.getSelectedItem().toString());
     }//GEN-LAST:event_savedToken_JcbActionPerformed
 
     private void userNameInput_TfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userNameInput_TfActionPerformed
-        // TODO add your handling code here:
+	// TODO add your handling code here:
 	this.failFormatMail_Lb.setVisible(false);
     }//GEN-LAST:event_userNameInput_TfActionPerformed
 
     private void userNameInput_TfMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_userNameInput_TfMouseClicked
-        // TODO add your handling code here:
+	// TODO add your handling code here:
 	this.failFormatMail_Lb.setVisible(false);
     }//GEN-LAST:event_userNameInput_TfMouseClicked
+
+    private void savedToken_JcbKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_savedToken_JcbKeyPressed
+	// TODO add your handling code here:
+	if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
+	    int index = this.savedToken_Jcb.getSelectedIndex();
+	    System.out.println(index);
+	    if (index > 0) {
+		String userName = (String) this.savedToken_Jcb.getSelectedItem();
+		int response = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xoá " + userName + " không?");
+		if (response == JOptionPane.YES_OPTION) {
+		    this.savedToken_Jcb.removeItemAt(index);
+		    this.userNameInput_Tf.setText("");
+		    LoginProcess.deleteLoginToken(userName);
+		    JOptionPane.showMessageDialog(this, "Bạn đã xoá thành công!");
+		}
+	    }
+	}
+    }//GEN-LAST:event_savedToken_JcbKeyPressed
+
+    private void savedToken_JcbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_savedToken_JcbMouseClicked
+        // TODO add your handling code here:
+	if(evt.getButton()== MouseEvent.BUTTON3){
+	    System.out.println("right click here");
+	}
+    }//GEN-LAST:event_savedToken_JcbMouseClicked
 
     private void initJCBoxLoadSaveToken() {
 	List<String> listSaveToken = Init.initSaveTokens();
@@ -240,6 +278,7 @@ public class newLogin extends javax.swing.JFrame {
 	    this.savedToken_Jcb.addItem(token);
 	}
     }
+
     /**
      * @param args the command line arguments
      */

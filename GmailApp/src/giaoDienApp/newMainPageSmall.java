@@ -38,7 +38,7 @@ import javax.swing.ListModel;
  *
  * @author Admin
  */
-public class newMainPage extends javax.swing.JFrame {
+public class newMainPageSmall extends javax.swing.JFrame {
 
     /**
      * Creates new form newMainPage
@@ -51,7 +51,7 @@ public class newMainPage extends javax.swing.JFrame {
     DefaultListModel inboxMailMode = null;
     DefaultListModel trashMailMode = null;
 
-    public newMainPage(newLogin parentFrame) {
+    public newMainPageSmall(newLogin parentFrame) {
 	this.parentFrame = parentFrame;
 	initComponents();
 	// set size cho 2 Pn load động
@@ -306,7 +306,7 @@ public class newMainPage extends javax.swing.JFrame {
                 logout_LbMouseClicked(evt);
             }
         });
-        menu_Pn.add(logout_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 777, -1, -1));
+        menu_Pn.add(logout_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 490, -1, -1));
 
         mail_Pn.setBackground(new java.awt.Color(161, 233, 237));
         mail_Pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -409,7 +409,7 @@ public class newMainPage extends javax.swing.JFrame {
         mainText_Tarea.setToolTipText("");
         jScrollPane3.setViewportView(mainText_Tarea);
 
-        mail_Pn.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 850, 460));
+        mail_Pn.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 850, 270));
 
         topMenu_Pn.setBackground(new java.awt.Color(255, 255, 255));
         topMenu_Pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -453,7 +453,7 @@ public class newMainPage extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(boxMail_Jlist);
 
-        mailBox_Pn.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 56, 270, 730));
+        mailBox_Pn.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 56, 270, 520));
 
         loadingBoxName_Lb.setBackground(new java.awt.Color(255, 255, 255));
         loadingBoxName_Lb.setFont(new java.awt.Font("Consolas", 1, 24)); // NOI18N
@@ -506,21 +506,25 @@ public class newMainPage extends javax.swing.JFrame {
                     .addComponent(topMenu_Pn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(mailBox_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(mail_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 870, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dynamic_option_read_writeMenu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(dynamic_option_read_writeMenu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(mail_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 870, javax.swing.GroupLayout.PREFERRED_SIZE)))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 840, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(topMenu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(menu_Pn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(topMenu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mailBox_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 780, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(mail_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(dynamic_option_read_writeMenu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(4, 4, 4)
+                        .addComponent(mail_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dynamic_option_read_writeMenu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(mailBox_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         pack();
@@ -587,7 +591,7 @@ public class newMainPage extends javax.swing.JFrame {
 	    try {
 		this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel(this.loadingBoxName_Lb.getText())));
 	    } catch (IOException ex) {
-		Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
+		Logger.getLogger(newMainPageSmall.class.getName()).log(Level.SEVERE, null, ex);
 	    }
 	}
 	this.boxMail_Jlist.setVisible(true);
@@ -611,7 +615,7 @@ public class newMainPage extends javax.swing.JFrame {
 		    messageInbox.remove(selectedIndex);
 		    JOptionPane.showMessageDialog(this, "Đã untrash thành công !");
 		} catch (IOException ex) {
-		    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
+		    Logger.getLogger(newMainPageSmall.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	    }
 	}
@@ -728,7 +732,7 @@ public class newMainPage extends javax.swing.JFrame {
 		boxMail_Jlist.setCellRenderer(new mailListRender());
 		
 	    } catch (IOException | MessagingException ex) {
-		Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
+		Logger.getLogger(newMainPageSmall.class.getName()).log(Level.SEVERE, null, ex);
 	    }
 	}
     }//GEN-LAST:event_search_TfKeyPressed
@@ -803,7 +807,7 @@ public class newMainPage extends javax.swing.JFrame {
 	try {
 	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel(this.loadingBoxName_Lb.getText())));
 	} catch (IOException ex) {
-	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(newMainPageSmall.class.getName()).log(Level.SEVERE, null, ex);
 	}
 	// nếu là lần đầu bấm vào, listMode chưa được set thì khởi tạo
 	if (trashMailMode == null) {
@@ -943,7 +947,7 @@ public class newMainPage extends javax.swing.JFrame {
 	try {
 	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel(loadStartUpLabel)));
 	} catch (IOException ex) {
-	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(newMainPageSmall.class.getName()).log(Level.SEVERE, null, ex);
 	}
 	if (GlobalVariable.internetOn == true) {
 	    DefaultListModel listMailMode = new DefaultListModel();
@@ -959,7 +963,7 @@ public class newMainPage extends javax.swing.JFrame {
 	try {
 	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel("TRASH")));
 	} catch (IOException ex) {
-	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(newMainPageSmall.class.getName()).log(Level.SEVERE, null, ex);
 	}
 	loadMsgObToJlist("TRASH");
     }
@@ -969,7 +973,7 @@ public class newMainPage extends javax.swing.JFrame {
 	try {
 	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel(this.loadingBoxName_Lb.getText())));
 	} catch (IOException ex) {
-	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(newMainPageSmall.class.getName()).log(Level.SEVERE, null, ex);
 	}
 	// load lại jlist dựa vào label đang load
 	loadMsgObToJlist(this.loadingBoxName_Lb.getText());
