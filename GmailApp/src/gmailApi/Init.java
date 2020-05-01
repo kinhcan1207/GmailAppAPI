@@ -45,9 +45,9 @@ public class Init {
      * @return
      * @throws FailToLoadInitInboxException
      */
-    public static List<MessageObject> initStartUpInboxList() throws FailToLoadInitInboxException {
+    public static List<MessageObject> initInboxList(String label) throws FailToLoadInitInboxException {
 	List<String> loadFromLabel = new ArrayList<>();
-	loadFromLabel.add("INBOX");
+	loadFromLabel.add(label);
 	List<MessageObject> listMessages = new ArrayList<>();
 	try {
 	    List<Message> initListMessages = MessageProcess.getListMail(loadFromLabel,13);

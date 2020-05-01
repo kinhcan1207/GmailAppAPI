@@ -14,6 +14,7 @@ import com.google.api.services.gmail.model.MessagePart;
 import com.google.api.services.gmail.model.MessagePartBody;
 import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.api.services.gmail.model.ModifyMessageRequest;
+import customException.FailToLoadInitInboxException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -128,6 +129,7 @@ public class MessageProcess {
 
     /**
      * đổ dữ liệu phần header cho Object
+     *
      * @param msgOb
      * @param message
      */
@@ -155,6 +157,7 @@ public class MessageProcess {
 
     /**
      * đổ dữ liệu phần body cho Object
+     *
      * @param msgOb
      * @param parts
      */
@@ -207,6 +210,7 @@ public class MessageProcess {
 
     /**
      * load từ Message(api.gmail) sang msgOb, nói chung là đổ dữ liều vào object
+     *
      * @param msgOb
      */
     public static void loadMessage(MessageObject msgOb) {
@@ -599,11 +603,12 @@ public class MessageProcess {
 
     /**
      * tìm kiếm mail theo query
+     *
      * @param query
      * @throws IOException
      * @throws MessagingException
      */
-    public static void search(String query) throws IOException, MessagingException {
+    public static List<MessageObject> search(String query) throws IOException, MessagingException {
 	Gmail service = GlobalVariable.getService();
 	String userId = GlobalVariable.userId;
 	ListMessagesResponse response = service.users().messages().list(userId).setQ(query).execute();
@@ -620,15 +625,29 @@ public class MessageProcess {
 		break;
 	    }
 	}
-
-	for (Message message : messages) {
-	    getMessageById(service, userId, message.getId());
-	    System.out.println("----------------------------------------------------------");
+	List<MessageObject> listMessages = new ArrayList<>();
+	try {
+	    for (Message msg : messages) {
+		MessageObject newMessOb = new MessageObject();
+		newMessOb.id = msg.getId();
+		newMessOb.from = MessageProcess.getFrom(MessageProcess.getMessageById(GlobalVariable.getService(), GlobalVariable.userId, newMessOb.id).getPayload().getHeaders());
+		listMessages.add(newMessOb); //MessageProcess.parseHeaderMail(msg.getId())
+	    }
+	} catch (IOException | MessagingException ex) {
+//	    Logger.getLogger(Init.class.getName()).log(Level.SEVERE, null, ex);
 	}
+	return listMessages;
+
+//	for (Message message : messages) {
+//	    getMessageById(service, userId, message.getId());
+//	    System.out.println("----------------------------------------------------------");
+//	}
+
     }
 
     /**
      * save mail đang đọc
+     *
      * @param msgOb
      * @param pathDir
      */
@@ -658,26 +677,27 @@ public class MessageProcess {
 	    }
 	}
     }
-    
+
     /**
      * load lại mail từ file
+     *
      * @param fileName
      * @return MessageObject
      */
-    public static MessageObject readSaveMail(String fileName){
-	FileInputStream fin=null;
+    public static MessageObject readSaveMail(String fileName) {
+	FileInputStream fin = null;
 	ObjectInputStream in = null;
-	MessageObject msgOb =null;
-	try{
+	MessageObject msgOb = null;
+	try {
 	    fin = new FileInputStream(fileName);
 	    in = new ObjectInputStream(fin);
-	    
+
 	    msgOb = (MessageObject) in.readObject();
 	} catch (FileNotFoundException ex) {
 	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
 	} catch (IOException | ClassNotFoundException ex) {
 	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
-	}finally {
+	} finally {
 	    try {
 		if (in != null) {
 		    in.close();
@@ -691,4 +711,5 @@ public class MessageProcess {
 	}
 	return msgOb;
     }
+    
 }

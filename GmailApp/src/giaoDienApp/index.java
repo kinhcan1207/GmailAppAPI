@@ -1229,7 +1229,7 @@ public class index extends javax.swing.JFrame {
 	    lb_name.setText("Mail Box");
 	    DefaultListModel listMail = new DefaultListModel(); // khởi tạo Listmodel để đổ dữ liệu vào
 	    try {
-		messageInbox = Init.initStartUpInboxList();
+		messageInbox = Init.initInboxList("INBOX");
 
 		list_mailbox.setModel(listMail);                      // đổ dữ liệu từ listmodel đã tạo ở trên vào cái hiển thị
 		list_mailbox.setCellRenderer(new mailListRender());   // set các cell trong list lại .

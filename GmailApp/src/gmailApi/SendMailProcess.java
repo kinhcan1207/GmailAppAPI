@@ -7,11 +7,14 @@ package gmailApi;
 
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.model.Draft;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -115,6 +118,7 @@ public class SendMailProcess {
 	    }
 	    // set bcc
 	    if (bcc != null) {
+
 		InternetAddress[] listbcc = new InternetAddress[bcc.length];
 		for (int i = 0; i < bcc.length; i++) {
 		    listbcc[i] = new InternetAddress(bcc[i]);
@@ -122,11 +126,13 @@ public class SendMailProcess {
 		msg.setRecipients(Message.RecipientType.BCC, listbcc);
 	    }
 	    // set to mail
-	    InternetAddress[] listto = new InternetAddress[toMail.length];
-	    for (int i = 0; i < toMail.length; i++) {
-		listto[i] = new InternetAddress(toMail[i]);
+	    if (toMail != null) {
+		InternetAddress[] listto = new InternetAddress[toMail.length];
+		for (int i = 0; i < toMail.length; i++) {
+		    listto[i] = new InternetAddress(toMail[i]);
+		}
+		msg.setRecipients(Message.RecipientType.TO, listto);
 	    }
-	    msg.setRecipients(Message.RecipientType.TO, listto);
 
 	    // set subject of mail
 	    msg.setSubject(subject);
@@ -223,16 +229,30 @@ public class SendMailProcess {
 	}
 	sendMessage(service, userId, msg);
     }
-//        try{
-    // sendmail
-//            Transport transport = service.getTransport("smtp");
-//            transport.connect(ConfigMailServer.hostName, GetMailGmail.fromMail, GetMailGmail.passWord);
-//            transport.sendMessage(msg, msg.getAllRecipients());
-//            transport.close();
-//            System.out.println("Send mail success !");
-//        }catch (MessagingException e){
-//            System.out.println(e.toString());
-//            System.out.println("There're something wrong with send mail !");
-//        }
-//    }
+
+    /**
+     * taọ mail như là 1 thư nháp, được tìm thấy trong hộp thư nháp
+     *
+     * @param service
+     * @param userId
+     * @param msg
+     */
+    public void createDraft(Gmail service,
+	    String userId) {
+	if (fileName == null) {
+	    // just Text mail
+	    prepareTextMail();
+	} else {
+	    prepareTextMail();
+	    prepareMailAttachment();
+	}
+	try {
+	    com.google.api.services.gmail.model.Message message = createMessageWithEmail(this.msg);
+	    Draft draft = new Draft();
+	    draft.setMessage(message);
+	    service.users().drafts().create(userId, draft).execute();
+	} catch (IOException | MessagingException ex) {
+	    Logger.getLogger(SendMailProcess.class.getName()).log(Level.SEVERE, null, ex);
+	}
+    }
 }

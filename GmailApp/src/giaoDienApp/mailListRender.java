@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
 import gmailApi.MessageObject;
+import java.awt.Font;
 
 /**
  *
@@ -25,20 +26,22 @@ public class mailListRender extends JPanel implements ListCellRenderer<MessageOb
 
     JLabel lb_list_mailfrom = new JLabel();
     JLabel lb_list_maildate = new JLabel();
-//    JLabel lb_list_mailcc = new JLabel();
-//    JLabel lb_list_avt = new JLabel();
 
     public mailListRender() {
         setLayout(new GridLayout(2, 1));
         add(lb_list_mailfrom);
-        add(lb_list_maildate, BorderLayout.LINE_END);
+        add(lb_list_maildate);
 
     }
 
     @Override
     public Component getListCellRendererComponent(JList<? extends MessageObject> list, MessageObject msgOb, int index, boolean isSelected, boolean cellHasFocus) {
-        lb_list_mailfrom.setForeground(Color.blue);
+        lb_list_mailfrom.setFont(new Font("Consolas", Font.PLAIN,16));
+	lb_list_maildate.setFont(new Font("Consolas", Font.PLAIN,16));
+	lb_list_mailfrom.setAlignmentX(5);
+	lb_list_mailfrom.setForeground(Color.BLACK);
         lb_list_maildate.setText(msgOb.date);
+	
         lb_list_mailfrom.setText(msgOb.from);
 
         lb_list_maildate.setOpaque(true);
