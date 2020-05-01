@@ -534,6 +534,7 @@ public class newMainPage extends javax.swing.JFrame {
 	// mà không load lại từ đầu
 	if (!loadingBoxName_Lb.getText().equals("INBOX")) {
 	    loadingBoxName_Lb.setText("INBOX");
+	    DefaultListModel model = (DefaultListModel) boxMail_Jlist.getModel();
 	    boxMail_Jlist.setModel(inboxMailMode);                      // đổ dữ liệu từ listmodel đã tạo ở trên vào cái hiển thị
 	    boxMail_Jlist.setCellRenderer(new mailListRender());   // set các cell trong list lại .
 	    try {
@@ -705,8 +706,9 @@ public class newMainPage extends javax.swing.JFrame {
 	loadingBoxName_Lb.setText("TRASH");
 	// nếu là lần đầu bấm vào, listMode chưa được set thì khởi tạo
 	if (trashMailMode == null) {
+	    trashMailMode = new DefaultListModel();
+	    boxMail_Jlist.setModel(trashMailMode);
 	    loadTrashMailBox();
-	    trashMailMode = (DefaultListModel) boxMail_Jlist.getModel();
 	} else {
 	    //nếu là lần thứ 2 trở đi bấm vào thì chỉ set lại model lên mà ko load lại dữ liệu
 	    boxMail_Jlist.setModel(trashMailMode);                      // đổ dữ liệu từ listmodel đã tạo ở trên vào cái hiển thị
