@@ -152,6 +152,13 @@ public class MessageProcess {
 	    if (messHeadPart.getName().equals("Cc")) {
 		msgOb.cc = messHeadPart.getValue();
 	    }
+	    // lấy 2 trường sử dụng cho việc reply mail
+	    if (messHeadPart.getName().equals("Message-ID")) {
+		msgOb.messageID = messHeadPart.getValue();
+	    }
+	    if (messHeadPart.getName().equals("References")) {
+		msgOb.references = messHeadPart.getValue();
+	    }
 	}
     }
 
@@ -502,67 +509,7 @@ public class MessageProcess {
 	}
     }
 
-    /**
-     * reply a message
-     *
-     * @param messageId
-     * @param replyMessage
-     * @throws IOException
-     */
-    public static void reply(String messageId, String replyMessage) throws IOException {
-	// must get from old mail
-	String from = null;
-	String subject;
-	String newSubject = "";
-	String oldReferences = null;
 
-	String messageID = null;
-
-	Gmail service = GlobalVariable.getService();
-	String userId = "testdoan123456@gmail.com";
-	Message message = service.users().messages().get(userId, messageId).setFormat("full").execute();
-	String threadId = message.getThreadId();
-
-	MessagePart payload = message.getPayload();
-	List<MessagePartHeader> headers = payload.getHeaders();
-	for (MessagePartHeader messHeadPart : headers) {
-	    if (messHeadPart.getName().equals("From")) {
-		from = messHeadPart.getValue();
-	    }
-	    if (messHeadPart.getName().equals("Subject")) {
-		subject = messHeadPart.getValue();
-		newSubject += subject;
-	    }
-	    if (messHeadPart.getName().equals("Message-ID")) {
-		messageID = messHeadPart.getValue();
-	    }
-	    if (messHeadPart.getName().equals("References")) {
-		oldReferences = messHeadPart.getValue();
-	    }
-	}
-
-	Properties props = new Properties();
-	Session session = Session.getDefaultInstance(props, null);
-
-	MimeMessage mimeMessage = new MimeMessage(session);
-	InternetAddress[] listto = new InternetAddress[1];
-	InternetAddress[] listfrom = new InternetAddress[1];
-	try {
-	    listto[0] = new InternetAddress(from);
-	    mimeMessage.setText(replyMessage);
-	    mimeMessage.setRecipients(javax.mail.Message.RecipientType.TO, listto);
-	    mimeMessage.setFrom(new InternetAddress(userId));
-	    mimeMessage.setSubject(newSubject, "utf-8");
-	    mimeMessage.setHeader("References", oldReferences + " " + messageID);
-	    mimeMessage.setHeader("In-Reply-To", messageID);
-
-	    SendMailProcess.sendMessage(service, userId, mimeMessage);
-	} catch (AddressException ex) {
-	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
-	} catch (MessagingException ex) {
-	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
-	}
-    }
 
     /**
      * xoá hoàn toàn mail này, không quay lại được
@@ -598,7 +545,7 @@ public class MessageProcess {
     public static void unTrash(String messageId) throws IOException {
 	Gmail service = GlobalVariable.getService();
 	String userId = GlobalVariable.userId;
-	service.users().messages().untrash(userId, userId).execute();
+	service.users().messages().untrash(userId, messageId).execute();
     }
 
     /**

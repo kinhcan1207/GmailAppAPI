@@ -9,20 +9,18 @@ import customException.FailToLoadInitInboxException;
 import gmailApi.GlobalVariable;
 import gmailApi.Init;
 import gmailApi.LabelProcess;
-import gmailApi.LoginProcess;
 import static gmailApi.LoginProcess.checkMail;
 import gmailApi.MessageObject;
 import gmailApi.MessageProcess;
 import gmailApi.SendMailProcess;
+import gmailApi.SendMailProcessBuilder;
 import gmailApi.XuLyFile;
-import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +30,6 @@ import javax.mail.MessagingException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 
 /**
  *
@@ -130,7 +127,7 @@ public class newMainPage extends javax.swing.JFrame {
         search_Tf = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         loginingUser_Lb = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        exit_Lb = new javax.swing.JLabel();
         mailBox_Pn = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         boxMail_Jlist = new javax.swing.JList<>();
@@ -244,6 +241,11 @@ public class newMainPage extends javax.swing.JFrame {
         reply_Lb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         reply_Lb.setMaximumSize(new java.awt.Dimension(40, 40));
         reply_Lb.setPreferredSize(new java.awt.Dimension(40, 40));
+        reply_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                reply_LbMouseClicked(evt);
+            }
+        });
         readMail_Pn.add(reply_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 0, 50, 60));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/loading.gif"))); // NOI18N
@@ -432,14 +434,14 @@ public class newMainPage extends javax.swing.JFrame {
         loginingUser_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_user_24px.png"))); // NOI18N
         topMenu_Pn.add(loginingUser_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 20, 270, 30));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete_30px.png"))); // NOI18N
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        exit_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete_30px.png"))); // NOI18N
+        exit_Lb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        exit_Lb.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
+                exit_LbMouseClicked(evt);
             }
         });
-        topMenu_Pn.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1100, 10, 30, 40));
+        topMenu_Pn.add(exit_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(1100, 10, 30, 40));
 
         mailBox_Pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -475,6 +477,7 @@ public class newMainPage extends javax.swing.JFrame {
         reload_Bt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/reset_30px.png"))); // NOI18N
         reload_Bt.setBorder(null);
         reload_Bt.setBorderPainted(false);
+        reload_Bt.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         reload_Bt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reload_BtActionPerformed(evt);
@@ -576,8 +579,7 @@ public class newMainPage extends javax.swing.JFrame {
 
     private void boxMail_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boxMail_LbMouseClicked
 	// TODO add your handling code here:
-	cleanReadMailPanel();
-	// vì ban đầu là load cái box này lên trước, nên khi bấm vào thì chỉ cần set lại model lên
+	// vì ban đầu là load cái box này lên trước,model đã có sẵn , nên khi bấm vào thì chỉ cần set lại model lên
 	// mà không load lại từ đầu
 	if (!loadingBoxName_Lb.getText().equals("INBOX")) {
 	    loadingBoxName_Lb.setText("INBOX");
@@ -590,24 +592,31 @@ public class newMainPage extends javax.swing.JFrame {
 		Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
 	    }
 	}
+	cleanReadMailPanel();
 	this.boxMail_Jlist.setVisible(true);
 	this.writeMail_Pn.setVisible(false);
 	this.readMail_Pn.setVisible(true);
     }//GEN-LAST:event_boxMail_LbMouseClicked
 
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+    private void exit_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exit_LbMouseClicked
 	// TODO add your handling code here:
 	System.exit(0);
-    }//GEN-LAST:event_jLabel1MouseClicked
-    private void untrash(){
+    }//GEN-LAST:event_exit_LbMouseClicked
+    private void untrash() {
 	int selectedIndex = this.boxMail_Jlist.getSelectedIndex();
-	if(selectedIndex != -1){
+	if (selectedIndex != -1) {
 	    int response = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn Untrash thư này hay không?");
-	    if(response == JOptionPane.YES_OPTION){
+	    if (response == JOptionPane.YES_OPTION) {
 		MessageObject msgOb = messageInbox.get(selectedIndex);
 		try {
 		    MessageProcess.unTrash(msgOb.id);
-		    boxMail_Jlist.remove(selectedIndex);
+		    // lấy model hiện tại của box
+		    DefaultListModel listMail = (DefaultListModel) boxMail_Jlist.getModel();
+		    //remove ở index cần untrash
+		    listMail.remove(selectedIndex);
+		    //set lại model cho box
+		    boxMail_Jlist.setModel(listMail);
+		    //remove phần tử tại index của List<messageObject>
 		    messageInbox.remove(selectedIndex);
 		    JOptionPane.showMessageDialog(this, "Đã untrash thành công !");
 		} catch (IOException ex) {
@@ -618,29 +627,33 @@ public class newMainPage extends javax.swing.JFrame {
     }
     private void boxMail_JlistMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boxMail_JlistMouseClicked
 	// TODO add your handling code here: bấm vào để đọc mail
-	
+
 	// xử lý riêng cho khi load trash inbox: dùng right click để untrash
 	// kiểm tra có phải right click không
-	if(evt.getButton()== MouseEvent.BUTTON3 && loadingBoxName_Lb.equals("TRASH")){
+	if (evt.getButton() == MouseEvent.BUTTON3 && loadingBoxName_Lb.getText().equals("TRASH")) {
+	    // untrash 
 	    untrash();
-	}
-	int chon = boxMail_Jlist.getSelectedIndex();
-	if (chon != -1) {
-	    mail_Pn.setVisible(true);
-	    MessageObject msgOb = messageInbox.get(chon);
-	    MessageProcess.loadMessage(msgOb);
-	    from_Tf.setText(msgOb.from);
-	    to_Tf.setText(msgOb.to);
-	    cc_Tf.setText(msgOb.cc);
-	    subject_Tf.setText(msgOb.subject);
-	    date_Tf.setText(msgOb.date);
-	    mainText_Tarea.setText(msgOb.mainText);
-	    // load file len
-	    DefaultComboBoxModel model = new DefaultComboBoxModel();
-	    for (Map.Entry m : msgOb.listFile.entrySet()) {
-		model.addElement(m.getKey());
+	    // xoá đi mail đang hiện( là mail đang bị untrash)
+	    cleanReadMailPanel();
+	} else {
+	    int chon = boxMail_Jlist.getSelectedIndex();
+	    if (chon != -1) {
+		mail_Pn.setVisible(true);
+		MessageObject msgOb = messageInbox.get(chon);
+		MessageProcess.loadMessage(msgOb);
+		from_Tf.setText(msgOb.from);
+		to_Tf.setText(msgOb.to);
+		cc_Tf.setText(msgOb.cc);
+		subject_Tf.setText(msgOb.subject);
+		date_Tf.setText(msgOb.date);
+		mainText_Tarea.setText(msgOb.mainText);
+		// load file len
+		DefaultComboBoxModel model = new DefaultComboBoxModel();
+		for (Map.Entry m : msgOb.listFile.entrySet()) {
+		    model.addElement(m.getKey());
+		}
+		this.fileAttachRead_Jcb.setModel(model);
 	    }
-	    this.fileAttachRead_Jcb.setModel(model);
 	}
     }//GEN-LAST:event_boxMail_JlistMouseClicked
 
@@ -654,21 +667,77 @@ public class newMainPage extends javax.swing.JFrame {
 	this.fileAttachWrite_Jcb.addItem(filePath);
     }//GEN-LAST:event_addFileWrite_BtActionPerformed
 
+    /**
+     * kiểm tra các trường dữ liệu khi click gửi mail đi và gửi mail
+     */
+    public void clickSentMail() {
+	String[] bcc = null;
+	String[] cc = null;
+	String[] to = null;
+	List<String> listFile = null;
+	// lấy bcc
+	if (!this.bcc_Tf.getText().isEmpty()) {
+	    bcc = this.bcc_Tf.getText().split(";");
+	}
+	//lấy cc
+	if (!this.cc_Tf.getText().isEmpty()) {
+	    cc = this.cc_Tf.getText().split(";");
+	}
+	//lấy to
+	if (!this.to_Tf.getText().isEmpty()) {
+	    to = this.to_Tf.getText().split(";");
+	}
+	// lấy subject,mainText có thì lấy , không thì kệ
+	String subject = this.subject_Tf.getText();
+	String mainText = this.mainText_Tarea.getText();
+	// lấy về số lượng file muốn attach
+	int numOfFile = this.fileAttachWrite_Jcb.getItemCount();
+	//nếu khác 0 thì sẽ đưa vào list file đã làm tham số cho hàm gửi mail
+	if (numOfFile != 0) {
+	    listFile = new ArrayList<>();
+	    for (int i = 0; i < numOfFile; i++) {
+		listFile.add(this.fileAttachWrite_Jcb.getItemAt(i));
+	    }
+	}
+//	    SendMailProcess newMail = new SendMailProcess(to, cc, bcc, subject, mainText, listFile);
+	// build tham số cho sendMailProcess
+	SendMailProcess newMail = new SendMailProcessBuilder().setToMail(to)
+		.setCc(cc)
+		.setBcc(bcc)
+		.setBody(mainText)
+		.setSubject(subject)
+		.setFileName(listFile)
+		.getSendMailProcess();
+	try {
+	    newMail.setUpAndSend();
+	    JOptionPane.showMessageDialog(this, "Bạn đã gửi mail thành công !");
+	} catch (MessagingException | IOException ex) {
+	    Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
+	    JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi trong quá trình gửi mail !");
+	}
+
+    }
     private void send_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_send_LbMouseClicked
 	// TODO add your handling code here:
-	if (checkMail(this.to_Tf.getText()) == true) {
-	    // gọi hàm để lấy thông tin và gửi mail
-	    clickSentMail();
-	    // clean các trường để nhập mail
-	    cleanReadMailPanel();
-	    // xoá đi list file đính kèm khi đã gửi mail
-	    this.fileAttachWrite_Jcb.removeAllItems();
-	    // xoá đi tool tip hướng dẫn
-	    this.bcc_Tf.setToolTipText("");
-	    this.cc_Tf.setToolTipText("");
-	    this.to_Tf.setToolTipText("");
+	// kiểm tra địa chỉ mail cần gửi đến có nhập không
+	if (this.to_Tf.getText().equals("")) {
+	    JOptionPane.showMessageDialog(this, "Bạn chưa nhập mail người cần nhận ! Xin vui lòng nhập đầy đủ !");
 	} else {
-	    JOptionPane.showMessageDialog(this, "Bạn vừa nhập sai format mail của người nhận! Vui lòng kiểm tra kĩ !");
+	    // nếu có thì kiểm tra format có đúng không
+	    if (checkMail(this.to_Tf.getText()) == true) {
+		// gọi hàm để lấy thông tin và gửi mail
+		clickSentMail();
+		// clean các trường để nhập mail
+		cleanReadMailPanel();
+		// xoá đi list file đính kèm khi đã gửi mail
+		this.fileAttachWrite_Jcb.removeAllItems();
+		// xoá đi tool tip hướng dẫn
+		this.bcc_Tf.setToolTipText("");
+		this.cc_Tf.setToolTipText("");
+		this.to_Tf.setToolTipText("");
+	    } else {
+		JOptionPane.showMessageDialog(this, "Bạn vừa nhập sai format mail của người nhận! Vui lòng kiểm tra kĩ !");
+	    }
 	}
 
     }//GEN-LAST:event_send_LbMouseClicked
@@ -701,15 +770,19 @@ public class newMainPage extends javax.swing.JFrame {
 	if (pathDir.equals("")) {
 	    return;
 	}
-	int chon = this.boxMail_Jlist.getSelectedIndex();
-	MessageObject msgOb = messageInbox.get(chon);
+	// lấy index của file cần down
+	int chooseIndex = this.boxMail_Jlist.getSelectedIndex();
+	// lấy object chứa file đó
+	MessageObject msgOb = messageInbox.get(chooseIndex);
+	// download object mail đã chọn
 	MessageProcess.saveMail(msgOb, pathDir);
+	// thông báo thành công
 	JOptionPane.showMessageDialog(this, "Bạn đã download thành công!");
     }//GEN-LAST:event_downMail_LbMouseClicked
 
     private void search_TfKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_search_TfKeyPressed
-	// TODO add your handling code here:
-	if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+	// Nhập xong query và ấn enter để tìm kiếm
+	if (evt.getKeyCode() == KeyEvent.VK_ENTER) { // nhận diện sự kiện ấn Enter
 	    // set label cho Jlist hiển thị là search result
 	    this.loadingBoxName_Lb.setText("Search result");
 	    // lấy về query người dùng nhập
@@ -718,15 +791,16 @@ public class newMainPage extends javax.swing.JFrame {
 		List<MessageObject> searchlist = MessageProcess.search(searchQuery);
 		// khởi tạo Listmodel mới để đổ dữ liệu vào
 		// mà không dùng listmodel cũ , vì có thể vô tình xoá đi mất inboxModel hoặc trashModel
-		DefaultListModel searchMailModel =  new DefaultListModel();
+		DefaultListModel searchMailModel = new DefaultListModel();
 		// load kết quả tìm được vào Model
 		for (int i = 0; i < searchlist.size(); i++) {
 		    searchMailModel.add(i, searchlist.get(i));
 		}
 		// set Model cho Jlist
-		boxMail_Jlist.setModel(searchMailModel);                      
+		boxMail_Jlist.setModel(searchMailModel);
 		boxMail_Jlist.setCellRenderer(new mailListRender());
-		
+		// nếu thành công thì clean đi readMailPanel
+		cleanReadMailPanel();
 	    } catch (IOException | MessagingException ex) {
 		Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
 	    }
@@ -734,7 +808,7 @@ public class newMainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_search_TfKeyPressed
 
     private void fileAttachWrite_JcbKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_fileAttachWrite_JcbKeyPressed
-	// TODO add your handling code here:
+	// chức năng xoá những file đã attach nhưng muốn xoá
 	// nếu key đang press là delete key thì xoá Item được chọn
 	if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
 	    int selectedIndex = this.fileAttachWrite_Jcb.getSelectedIndex();
@@ -755,21 +829,31 @@ public class newMainPage extends javax.swing.JFrame {
 
     private void moveToTrash_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_moveToTrash_LbMouseClicked
 	// TODO add your handling code here:
+	// nếu mà đang ở box TRash thì out luôn vì nó đang trash rồi còn move to trash nữa :> 
+	if (loadingBoxName_Lb.getText().equals("TRASH")) {
+	    return;
+	}
 	// lấy index phần tử cần move to trash
-	int chon = boxMail_Jlist.getSelectedIndex();
+	int chooseIndex = boxMail_Jlist.getSelectedIndex();
 	// nếu chưa chọn thì index =-1, không làm gì cả, nếu khác thì mới chạy code
-	if (chon != -1) {
+	if (chooseIndex != -1) {
 	    int confirmResponse = JOptionPane.showConfirmDialog(this, "Bạn có chăc muốn đưa mail này vào thùng rác không?");
 	    if (confirmResponse == JOptionPane.YES_OPTION) {
 
-		MessageObject msgOb = messageInbox.get(chon);
+		MessageObject msgOb = messageInbox.get(chooseIndex);
 		try {
+		    // gửi tham số cho hàm là MessageId
 		    MessageProcess.moveToTrash(msgOb.id);
-		    cleanReadMailPanel();
+		    //lấy listModel từ box đang load
 		    DefaultListModel listMail = (DefaultListModel) boxMail_Jlist.getModel();
-		    listMail.remove(chon);
+		    // xoá message đang chọn ra khỏi list
+		    listMail.remove(chooseIndex);
+		    // set lại lên Jlist
 		    boxMail_Jlist.setModel(listMail);
-		    messageInbox.remove(chon);
+		    // xoá phần tử ở index ra khỏi list<messageObject>
+		    messageInbox.remove(chooseIndex);
+		    //clean readMailPanel
+		    cleanReadMailPanel();
 		} catch (IOException ex) {
 		    Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -777,27 +861,79 @@ public class newMainPage extends javax.swing.JFrame {
 	}
     }//GEN-LAST:event_moveToTrash_LbMouseClicked
 
+    /**
+     * kiểm tra các trường dữ liệu khi click cancel khi đang soạn mail và tạo
+     * thư nháp
+     */
+    public void clickDraft() {
+	String[] bcc = null;
+	String[] cc = null;
+	String[] to = null;
+	List<String> listFile = null;
+
+	if (!this.bcc_Tf.getText().isEmpty()) {
+	    bcc = this.bcc_Tf.getText().split(";");
+	}
+	if (!this.cc_Tf.getText().isEmpty()) {
+	    cc = this.cc_Tf.getText().split(";");
+	}
+	if (!this.to_Tf.getText().isEmpty()) {
+	    to = this.to_Tf.getText().split(";");
+	}
+	String subject = this.subject_Tf.getText();
+	String mainText = this.mainText_Tarea.getText();
+	int numOfFile = this.fileAttachWrite_Jcb.getItemCount();
+	if (numOfFile != 0) {
+	    listFile = new ArrayList<>();
+	    for (int i = 0; i < numOfFile; i++) {
+		listFile.add(this.fileAttachWrite_Jcb.getItemAt(i));
+	    }
+	}
+	SendMailProcess draftMail = new SendMailProcess(to, cc, bcc, subject, mainText, listFile);
+	draftMail.createDraft(GlobalVariable.getService(), GlobalVariable.userId);
+
+    }
     private void cancel_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cancel_LbMouseClicked
 	// TODO add your handling code here:
 	int responseChoose = JOptionPane.showConfirmDialog(this, "Bạn có muốn lưu lại thư nháp?");
 	if (responseChoose == JOptionPane.YES_OPTION) {
 	    // nếu muốn tạo nháp
 	    clickDraft();
+	    JOptionPane.showMessageDialog(this, "Bạn đã lưu nháp thành công !");
+	    cleanReadMailPanel();
 	} else if (responseChoose == JOptionPane.NO_OPTION) {
 	    // không tạo nháp mà xoá luôn
 	    cleanReadMailPanel();
 	}
     }//GEN-LAST:event_cancel_LbMouseClicked
 
-    private void reload_BtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reload_BtActionPerformed
-	// TODO add your handling code here:
-	if (loadingBoxName_Lb.getText().equals("INBOX")) {
-	    reloadBoxMail();
+    private void reloadBoxMail() {
+	//load lại số lượng mail của box đang hiện trên list
+	try {
+	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel(this.loadingBoxName_Lb.getText())));
+	} catch (IOException ex) {
+	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
 	}
+	// load lại jlist dựa vào label đang load
+	loadMsgObToJlist(this.loadingBoxName_Lb.getText());
+    }
+    private void reload_BtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reload_BtActionPerformed
+	reloadBoxMail();
     }//GEN-LAST:event_reload_BtActionPerformed
 
+    private void loadTrashMailBox() {
+	// load lại số lượng mail box trash
+	try {
+	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel("TRASH")));
+	} catch (IOException ex) {
+	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
+	}
+	// load lại Jlist hiển thị mail
+	loadMsgObToJlist("TRASH");
+    }
     private void trashMail_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_trashMail_LbMouseClicked
-	// TODO add your handling code here:
+	//clean 
+	cleanReadMailPanel();
 	loadingBoxName_Lb.setText("TRASH"); //set label hiển thị tên label đang load
 	// hiển thị số lượng mail đang có trong box
 	try {
@@ -822,6 +958,19 @@ public class newMainPage extends javax.swing.JFrame {
 	this.writeMail_Pn.setVisible(false);
 	this.readMail_Pn.setVisible(true);
     }//GEN-LAST:event_trashMail_LbMouseClicked
+
+    private void reply_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reply_LbMouseClicked
+	// lấy index mail đang chọn
+	int chooseIndex = boxMail_Jlist.getSelectedIndex();
+	if (chooseIndex != -1) {
+	    // lấy message object tương ứng với index đã chọn
+	    MessageObject msgOb = messageInbox.get(chooseIndex);
+	    // hiện 1 frame cho thao tác reply
+	    ReplyMailFrame a = new ReplyMailFrame(this, msgOb);
+	    // set frame được nhìn thấy
+	    a.setVisible(true);
+	}
+    }//GEN-LAST:event_reply_LbMouseClicked
 
     /**
      * @param args the command line arguments
@@ -873,13 +1022,13 @@ public class newMainPage extends javax.swing.JFrame {
     private javax.swing.JTextField date_Tf;
     private javax.swing.JLabel downMail_Lb;
     private javax.swing.JPanel dynamic_option_read_writeMenu_Pn;
+    private javax.swing.JLabel exit_Lb;
     private javax.swing.JComboBox<String> fileAttachRead_Jcb;
     private javax.swing.JLabel fileAttachRead_Lb;
     public javax.swing.JComboBox<String> fileAttachWrite_Jcb;
     private javax.swing.JLabel fileAttachWrite_Lb;
     private javax.swing.JLabel from_Lb;
     private javax.swing.JTextField from_Tf;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
@@ -917,7 +1066,12 @@ public class newMainPage extends javax.swing.JFrame {
     private javax.swing.JPanel writeMail_Pn;
     // End of variables declaration//GEN-END:variables
 
-    private void loadMsgObToJlist(String loadLabel) {
+    /**
+     * load tất cả messages nằm trong loadLabel 
+     * chuyển thành messageObject và đưa lên Jlist để hiển thị
+     * @param loadLabel
+     */
+    public void loadMsgObToJlist(String loadLabel) {
 	// load label nào thì set text label đấy
 	loadingBoxName_Lb.setText(loadLabel);
 	// get model hiện tại của Jlist
@@ -951,28 +1105,8 @@ public class newMainPage extends javax.swing.JFrame {
 	    loadMsgObToJlist(loadStartUpLabel);
 	    inboxMailMode = (DefaultListModel) boxMail_Jlist.getModel(); // lưu lại inbox model
 	} else {
-
+	    // nếu không có internet( có thể không xử lý trường hợp này vì chắc gì cô đã care)
 	}
-    }
-
-    private void loadTrashMailBox() {
-	try {
-	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel("TRASH")));
-	} catch (IOException ex) {
-	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
-	}
-	loadMsgObToJlist("TRASH");
-    }
-
-    private void reloadBoxMail() {
-	//load lại số lượng mail của box đang hiện trên list
-	try {
-	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel(this.loadingBoxName_Lb.getText())));
-	} catch (IOException ex) {
-	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
-	}
-	// load lại jlist dựa vào label đang load
-	loadMsgObToJlist(this.loadingBoxName_Lb.getText());
     }
 
     private void cleanReadMailPanel() {
@@ -984,79 +1118,5 @@ public class newMainPage extends javax.swing.JFrame {
 	mainText_Tarea.setText("");
 	this.fileAttachRead_Jcb.removeAllItems();
 	date_Tf.setText("");
-    }
-
-    /**
-     * kiểm tra các trường dữ liệu khi click gửi mail đi và gửi mail
-     */
-    public void clickSentMail() {
-	String[] bcc = null;
-	String[] cc = null;
-	String[] to = null;
-	List<String> listFile = null;
-	if (this.to_Tf.getText().equals("")) {
-	    JOptionPane.showMessageDialog(this, "Bạn chưa nhập mail người cần nhận ! Xin vui lòng nhập đầy đủ !");
-	} else {
-	    if (!this.bcc_Tf.getText().isEmpty()) {
-		bcc = this.bcc_Tf.getText().split(";");
-	    }
-	    if (!this.cc_Tf.getText().isEmpty()) {
-		cc = this.cc_Tf.getText().split(";");
-	    }
-	    if (!this.to_Tf.getText().isEmpty()) {
-		to = this.to_Tf.getText().split(";");
-	    }
-	    String subject = this.subject_Tf.getText();
-	    String mainText = this.mainText_Tarea.getText();
-	    int numOfFile = this.fileAttachWrite_Jcb.getItemCount();
-	    if (numOfFile != 0) {
-		listFile = new ArrayList<>();
-		for (int i = 0; i < numOfFile; i++) {
-		    listFile.add(this.fileAttachWrite_Jcb.getItemAt(i));
-		}
-	    }
-	    SendMailProcess newMail = new SendMailProcess(to, cc, bcc, subject, mainText, listFile);
-	    try {
-		newMail.setUpAndSend();
-		JOptionPane.showMessageDialog(this, "Bạn đã gửi mail thành công !");
-	    } catch (MessagingException | IOException ex) {
-		Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
-		JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi trong quá trình gửi mail !");
-	    }
-	}
-    }
-
-    /**
-     * kiểm tra các trường dữ liệu khi click cancel khi đang soạn mail và tạo
-     * thư nháp
-     */
-    public void clickDraft() {
-	String[] bcc = null;
-	String[] cc = null;
-	String[] to = null;
-	List<String> listFile = null;
-
-	if (!this.bcc_Tf.getText().isEmpty()) {
-	    bcc = this.bcc_Tf.getText().split(";");
-	}
-	if (!this.cc_Tf.getText().isEmpty()) {
-	    cc = this.cc_Tf.getText().split(";");
-	}
-	if (!this.to_Tf.getText().isEmpty()) {
-	    to = this.to_Tf.getText().split(";");
-	}
-	String subject = this.subject_Tf.getText();
-	String mainText = this.mainText_Tarea.getText();
-	int numOfFile = this.fileAttachWrite_Jcb.getItemCount();
-	if (numOfFile != 0) {
-	    listFile = new ArrayList<>();
-	    for (int i = 0; i < numOfFile; i++) {
-		listFile.add(this.fileAttachWrite_Jcb.getItemAt(i));
-	    }
-	}
-	SendMailProcess draftMail = new SendMailProcess(to, cc, bcc, subject, mainText, listFile);
-	draftMail.createDraft(GlobalVariable.getService(), GlobalVariable.userId);
-	JOptionPane.showMessageDialog(this, "Bạn đã lưu nháp thành công !");
-	cleanReadMailPanel();
     }
 }

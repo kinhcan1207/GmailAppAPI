@@ -8,6 +8,8 @@ package gmailApi;
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Draft;
+import com.google.api.services.gmail.model.MessagePart;
+import com.google.api.services.gmail.model.MessagePartHeader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -23,6 +25,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -253,6 +256,73 @@ public class SendMailProcess {
 	    service.users().drafts().create(userId, draft).execute();
 	} catch (IOException | MessagingException ex) {
 	    Logger.getLogger(SendMailProcess.class.getName()).log(Level.SEVERE, null, ex);
+	}
+    }
+    
+        /**
+     * reply a message
+     *
+     * @param messageId
+     * @param replyMessage
+     * @throws IOException
+     */
+    public static void reply(MessageObject msgOb, String replyMessage) throws IOException {
+	// must get from old mail
+	String from = null;
+	String subject;
+	String newSubject = "";
+	String oldReferences = null;
+
+	String messageID = null;
+
+	Gmail service = GlobalVariable.getService();
+	String userId = GlobalVariable.userId;
+	// lấy thông tin của mail cũ
+//	com.google.api.services.gmail.model.Message message = service.users().messages().get(userId, messageId).setFormat("full").execute();
+//	String threadId = message.getThreadId();
+//	
+//	MessagePart payload = message.getPayload();
+//	List<MessagePartHeader> headers = payload.getHeaders();
+//	for (MessagePartHeader messHeadPart : headers) {
+//	    if (messHeadPart.getName().equals("From")) {
+//		from = messHeadPart.getValue();
+//	    }
+//	    if (messHeadPart.getName().equals("Subject")) {
+//		subject = messHeadPart.getValue();
+//		newSubject += subject;
+//	    }
+//	    if (messHeadPart.getName().equals("Message-ID")) {
+//		messageID = messHeadPart.getValue();
+//	    }
+//	    if (messHeadPart.getName().equals("References")) {
+//		oldReferences = messHeadPart.getValue();
+//	    }
+//	}
+	from = msgOb.from;
+	subject = msgOb.subject;
+	oldReferences = msgOb.references;
+	messageID = msgOb.messageID;
+	// tạo mail mới
+	Properties props = new Properties();
+	Session session = Session.getDefaultInstance(props, null);
+
+	MimeMessage mimeMessage = new MimeMessage(session);
+	InternetAddress[] listto = new InternetAddress[1];
+	InternetAddress[] listfrom = new InternetAddress[1];
+	try {
+	    listto[0] = new InternetAddress(from);
+	    mimeMessage.setText(replyMessage);
+	    mimeMessage.setRecipients(javax.mail.Message.RecipientType.TO, listto);
+	    mimeMessage.setFrom(new InternetAddress(userId));
+	    mimeMessage.setSubject(newSubject, "utf-8");
+	    mimeMessage.setHeader("References", oldReferences + " " + messageID);
+	    mimeMessage.setHeader("In-Reply-To", messageID);
+
+	    SendMailProcess.sendMessage(service, userId, mimeMessage);
+	} catch (AddressException ex) {
+	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
+	} catch (MessagingException ex) {
+	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
 	}
     }
 }

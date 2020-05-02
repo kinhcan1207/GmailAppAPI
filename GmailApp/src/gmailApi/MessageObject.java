@@ -22,12 +22,17 @@ public class MessageObject implements Serializable {
     public String bcc;
     public String subject;
     public String id;
+    
     public String date;
     public String time;
     public String avtName;
     public String mainText;
     public String to;
     public Map<String,String> listFile = new HashMap<>();
+    // hai trường đặc biệt sử dụng khi reply mail
+    public String messageID;
+    public String references;
+    
     public MessageObject(){
     }
     
