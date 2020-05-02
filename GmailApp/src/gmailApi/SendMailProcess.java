@@ -266,7 +266,7 @@ public class SendMailProcess {
      * @param replyMessage
      * @throws IOException
      */
-    public static void reply(MessageObject msgOb, String replyMessage) throws IOException {
+    public static void reply(MessageObject msgOb, String replyMessage, List<String> listFilePath) throws IOException {
 	// must get from old mail
 	String from = null;
 	String subject;
@@ -278,26 +278,6 @@ public class SendMailProcess {
 	Gmail service = GlobalVariable.getService();
 	String userId = GlobalVariable.userId;
 	// lấy thông tin của mail cũ
-//	com.google.api.services.gmail.model.Message message = service.users().messages().get(userId, messageId).setFormat("full").execute();
-//	String threadId = message.getThreadId();
-//	
-//	MessagePart payload = message.getPayload();
-//	List<MessagePartHeader> headers = payload.getHeaders();
-//	for (MessagePartHeader messHeadPart : headers) {
-//	    if (messHeadPart.getName().equals("From")) {
-//		from = messHeadPart.getValue();
-//	    }
-//	    if (messHeadPart.getName().equals("Subject")) {
-//		subject = messHeadPart.getValue();
-//		newSubject += subject;
-//	    }
-//	    if (messHeadPart.getName().equals("Message-ID")) {
-//		messageID = messHeadPart.getValue();
-//	    }
-//	    if (messHeadPart.getName().equals("References")) {
-//		oldReferences = messHeadPart.getValue();
-//	    }
-//	}
 	from = msgOb.from;
 	subject = msgOb.subject;
 	oldReferences = msgOb.references;

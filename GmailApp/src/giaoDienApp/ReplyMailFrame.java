@@ -7,8 +7,11 @@ package giaoDienApp;
 
 import gmailApi.MessageObject;
 import gmailApi.SendMailProcess;
+import gmailApi.XuLyFile;
 import java.awt.Frame;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -23,7 +26,7 @@ public class ReplyMailFrame extends javax.swing.JFrame {
      * Creates new form waitingFrame
      */
     MessageObject msgOb;
-
+    String mainText;
     // if click cancel; returnValue = false
     public ReplyMailFrame(newMainPage parent, MessageObject msgOb) {
 	this.msgOb = msgOb;
@@ -45,10 +48,13 @@ public class ReplyMailFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         userNameReply_Lb = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        replyText_Tarea = new javax.swing.JTextField();
-        sentReply_Bt = new javax.swing.JButton();
+        openAddFile_Bt = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         cancel_Bt = new javax.swing.JButton();
+        attachFile_Jcb = new javax.swing.JComboBox<>();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        replyText_Tarea = new javax.swing.JTextArea();
+        sentReply_Bt1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocation(new java.awt.Point(600, 400));
@@ -71,63 +77,90 @@ public class ReplyMailFrame extends javax.swing.JFrame {
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
         jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 50, 640, 10));
 
-        replyText_Tarea.addActionListener(new java.awt.event.ActionListener() {
+        openAddFile_Bt.setBackground(new java.awt.Color(161, 233, 237));
+        openAddFile_Bt.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
+        openAddFile_Bt.setText("OPEN");
+        openAddFile_Bt.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        openAddFile_Bt.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        openAddFile_Bt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                replyText_TareaActionPerformed(evt);
+                openAddFile_BtActionPerformed(evt);
             }
         });
-        jPanel1.add(replyText_Tarea, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 80, 640, 250));
-
-        sentReply_Bt.setBackground(new java.awt.Color(161, 233, 237));
-        sentReply_Bt.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
-        sentReply_Bt.setText("SENT");
-        sentReply_Bt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sentReply_BtActionPerformed(evt);
-            }
-        });
-        jPanel1.add(sentReply_Bt, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 350, 100, -1));
+        jPanel1.add(openAddFile_Bt, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 340, 100, 40));
 
         jLabel3.setBackground(new java.awt.Color(161, 233, 237));
         jLabel3.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
         jLabel3.setText("Nội dung:");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
 
         cancel_Bt.setBackground(new java.awt.Color(161, 233, 237));
         cancel_Bt.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
         cancel_Bt.setText("CANCEL");
+        cancel_Bt.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        cancel_Bt.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         cancel_Bt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancel_BtActionPerformed(evt);
             }
         });
-        jPanel1.add(cancel_Bt, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 350, 100, -1));
+        jPanel1.add(cancel_Bt, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 340, 100, 40));
+
+        jPanel1.add(attachFile_Jcb, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 340, 230, 40));
+
+        replyText_Tarea.setColumns(20);
+        replyText_Tarea.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
+        replyText_Tarea.setRows(5);
+        jScrollPane1.setViewportView(replyText_Tarea);
+
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 70, 640, 260));
+
+        sentReply_Bt1.setBackground(new java.awt.Color(161, 233, 237));
+        sentReply_Bt1.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
+        sentReply_Bt1.setText("SENT");
+        sentReply_Bt1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        sentReply_Bt1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        sentReply_Bt1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sentReply_Bt1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(sentReply_Bt1, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 340, 100, 40));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 810, 390));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void replyText_TareaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replyText_TareaActionPerformed
+    private void openAddFile_BtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openAddFile_BtActionPerformed
 	// TODO add your handling code here:
-    }//GEN-LAST:event_replyText_TareaActionPerformed
-
-    private void sentReply_BtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sentReply_BtActionPerformed
-	// TODO add your handling code here:
-	try {
-	    String replyMessage = replyText_Tarea.getText();
-	    SendMailProcess.reply(msgOb, replyMessage);
-	    JOptionPane.showMessageDialog(this, "Bạn đã gửi thành công !");
-	} catch (IOException ex) {
-	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
-	}
-	this.dispose();
-    }//GEN-LAST:event_sentReply_BtActionPerformed
+	String filePath = XuLyFile.showOpenFileDialog();
+	this.attachFile_Jcb.addItem(filePath);
+    }//GEN-LAST:event_openAddFile_BtActionPerformed
 
     private void cancel_BtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancel_BtActionPerformed
 	// TODO add your handling code here:
 	this.dispose();
     }//GEN-LAST:event_cancel_BtActionPerformed
+
+    private void sentReply_Bt1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sentReply_Bt1ActionPerformed
+        // TODO add your handling code here:
+	// lấy list file
+	List<String> listFileAttach = new ArrayList<>();
+	for(int i=0;i<this.attachFile_Jcb.getItemCount();i++){
+	    listFileAttach.add(attachFile_Jcb.getItemAt(i));
+	}
+	// lấy main text ( nội dung chính) 
+	this.mainText = this.replyText_Tarea.getText();
+	try {
+	    SendMailProcess.reply(msgOb, mainText, listFileAttach);
+	    JOptionPane.showMessageDialog(this, "Bạn đã reply thành công !");
+	} catch (IOException ex) {
+	    JOptionPane.showMessageDialog(this, "Bạn đã reply thất bại!");
+	    Logger.getLogger(ReplyMailFrame.class.getName()).log(Level.SEVERE, null, ex);
+	}
+
+    }//GEN-LAST:event_sentReply_Bt1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -166,13 +199,16 @@ public class ReplyMailFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> attachFile_Jcb;
     private javax.swing.JButton cancel_Bt;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    public javax.swing.JTextField replyText_Tarea;
-    private javax.swing.JButton sentReply_Bt;
+    private javax.swing.JButton openAddFile_Bt;
+    private javax.swing.JTextArea replyText_Tarea;
+    private javax.swing.JButton sentReply_Bt1;
     private javax.swing.JLabel userNameReply_Lb;
     // End of variables declaration//GEN-END:variables
 }
