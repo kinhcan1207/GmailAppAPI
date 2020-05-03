@@ -38,7 +38,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,7 +102,7 @@ public class MessageProcess {
      * @param messageId
      * @return 1 MessageObject
      */
-    public static MessageObject parseHeaderMail(String messageId) {
+    public static MessageObject getQuickHeaderInfo(String messageId) {
 	Gmail service = GlobalVariable.getService();
 	String userId = GlobalVariable.userId;
 	MessageObject msg = new MessageObject();
@@ -110,17 +112,14 @@ public class MessageProcess {
 	    message = service.users().messages().get(userId, messageId).setFormat("full").execute();
 	    MessagePart payload = message.getPayload();
 	    List<MessagePartHeader> headers = payload.getHeaders();
-	    for (MessagePartHeader messHeadPart : headers) {
-		if (messHeadPart.getName().equals("From")) {
-		    msg.from = messHeadPart.getValue();
-		}
-		if (messHeadPart.getName().equals("Subject")) {
-		    msg.subject = messHeadPart.getValue();
-		}
-		if (messHeadPart.getName().equals("Date")) {
-		    msg.date = messHeadPart.getValue();
-		}
+	    Map<String, String> myMap = new HashMap<>();
+	    for (Object i : headers.toArray()) {
+		String data = i.toString().replace("\\\"", "");
+		String[] parts = data.split("\"");
+		myMap.put(parts[3], parts[7]);
 	    }
+	    msg.from = myMap.get("From");
+	    msg.date = myMap.get("Date");
 	} catch (IOException ex) {
 	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
 	}
@@ -136,30 +135,43 @@ public class MessageProcess {
     public static void loadHeaderForMessageOb(MessageObject msgOb, Message message) {
 	MessagePart payload = message.getPayload();
 	List<MessagePartHeader> headers = payload.getHeaders();
-	for (MessagePartHeader messHeadPart : headers) {
-	    if (messHeadPart.getName().equals("From")) {
-		msgOb.from = messHeadPart.getValue();
-	    }
-	    if (messHeadPart.getName().equals("Subject")) {
-		msgOb.subject = messHeadPart.getValue();
-	    }
-	    if (messHeadPart.getName().equals("Date")) {
-		msgOb.date = messHeadPart.getValue();
-	    }
-	    if (messHeadPart.getName().equals("To")) {
-		msgOb.to = messHeadPart.getValue();
-	    }
-	    if (messHeadPart.getName().equals("Cc")) {
-		msgOb.cc = messHeadPart.getValue();
-	    }
-	    // lấy 2 trường sử dụng cho việc reply mail
-	    if (messHeadPart.getName().equals("Message-ID")) {
-		msgOb.messageID = messHeadPart.getValue();
-	    }
-	    if (messHeadPart.getName().equals("References")) {
-		msgOb.references = messHeadPart.getValue();
-	    }
+//	for (MessagePartHeader messHeadPart : headers) {
+//	    if (messHeadPart.getName().equals("From")) {
+//		msgOb.from = messHeadPart.getValue();
+//	    }
+//	    if (messHeadPart.getName().equals("Subject")) {
+//		msgOb.subject = messHeadPart.getValue();
+//	    }
+//	    if (messHeadPart.getName().equals("Date")) {
+//		msgOb.date = messHeadPart.getValue();
+//	    }
+//	    if (messHeadPart.getName().equals("To")) {
+//		msgOb.to = messHeadPart.getValue();
+//	    }
+//	    if (messHeadPart.getName().equals("Cc")) {
+//		msgOb.cc = messHeadPart.getValue();
+//	    }
+//	    // lấy 2 trường sử dụng cho việc reply mail
+//	    if (messHeadPart.getName().equals("Message-ID")) {
+//		msgOb.messageID = messHeadPart.getValue();
+//	    }
+//	    if (messHeadPart.getName().equals("References")) {
+//		msgOb.references = messHeadPart.getValue();
+//	    }
+//	}
+	Map<String, String> myMap = new HashMap<>();
+	for (Object i : headers.toArray()) {
+	    String data = i.toString().replace("\\\"", "");
+	    String[] parts = data.split("\"");
+	    myMap.put(parts[3], parts[7]);
 	}
+	msgOb.from = myMap.get("From");
+	msgOb.subject = myMap.get("Subject");
+	msgOb.date = myMap.get("Date");
+	msgOb.cc = myMap.get("Cc");
+	msgOb.to = myMap.get("To");
+	msgOb.messageID =myMap.get("Message-ID");
+	msgOb.references = myMap.get("References");
     }
 
     /**
@@ -509,8 +521,6 @@ public class MessageProcess {
 	}
     }
 
-
-
     /**
      * xoá hoàn toàn mail này, không quay lại được
      *
@@ -589,7 +599,6 @@ public class MessageProcess {
 //	    getMessageById(service, userId, message.getId());
 //	    System.out.println("----------------------------------------------------------");
 //	}
-
     }
 
     /**
@@ -658,5 +667,5 @@ public class MessageProcess {
 	}
 	return msgOb;
     }
-    
+
 }

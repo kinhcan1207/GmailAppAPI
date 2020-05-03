@@ -5,10 +5,15 @@
  */
 package giaoDienApp;
 
+import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.model.ListMessagesResponse;
+import com.google.api.services.gmail.model.Message;
 import customException.FailToLoadInitInboxException;
+import customException.WrongLoginInfoException;
 import gmailApi.GlobalVariable;
 import gmailApi.Init;
 import gmailApi.LabelProcess;
+import gmailApi.LoginProcess;
 import static gmailApi.LoginProcess.checkMail;
 import gmailApi.MessageObject;
 import gmailApi.MessageProcess;
@@ -24,12 +29,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -101,6 +108,7 @@ public class newMainPage extends javax.swing.JFrame {
         boxMail_Lb = new javax.swing.JLabel();
         trashMail_Lb = new javax.swing.JLabel();
         logout_Lb = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         mail_Pn = new javax.swing.JPanel();
         from_Lb = new javax.swing.JLabel();
         from_Tf = new javax.swing.JTextField();
@@ -288,7 +296,7 @@ public class newMainPage extends javax.swing.JFrame {
                 boxMail_LbMouseClicked(evt);
             }
         });
-        menu_Pn.add(boxMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 212, -1, 38));
+        menu_Pn.add(boxMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 330, -1, 38));
 
         trashMail_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8_trash_48.png"))); // NOI18N
         trashMail_Lb.setToolTipText("Xem hộp thư rác");
@@ -298,7 +306,7 @@ public class newMainPage extends javax.swing.JFrame {
                 trashMail_LbMouseClicked(evt);
             }
         });
-        menu_Pn.add(trashMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 301, -1, -1));
+        menu_Pn.add(trashMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 430, -1, -1));
 
         logout_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logout_50px.png"))); // NOI18N
         logout_Lb.setToolTipText("Đăng xuất");
@@ -309,6 +317,11 @@ public class newMainPage extends javax.swing.JFrame {
             }
         });
         menu_Pn.add(logout_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 777, -1, -1));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/send_email_50px.png"))); // NOI18N
+        jLabel1.setToolTipText("Hộp thư đã gửi");
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menu_Pn.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, -1, -1));
 
         mail_Pn.setBackground(new java.awt.Color(161, 233, 237));
         mail_Pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -753,8 +766,8 @@ public class newMainPage extends javax.swing.JFrame {
 	    String fileName = (String) this.fileAttachRead_Jcb.getSelectedItem();
 	    String fileAttId;
 	    // lấy Index của file download để tìm msgOb chứa nó
-	    int chon = this.fileAttachRead_Jcb.getSelectedIndex();
-	    MessageObject msgOb = messageInbox.get(chon);
+	    int chooseIndex = this.fileAttachRead_Jcb.getSelectedIndex();
+	    MessageObject msgOb = messageInbox.get(chooseIndex);
 	    // lấy Id của file download file dựa vào Id
 	    fileAttId = msgOb.listFile.get(fileName);
 	    //download file
@@ -915,7 +928,7 @@ public class newMainPage extends javax.swing.JFrame {
 	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
 	}
 	// load lại jlist dựa vào label đang load
-	loadMsgObToJlist(this.loadingBoxName_Lb.getText());
+	startThread(this.loadingBoxName_Lb.getText());
     }
     private void reload_BtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reload_BtActionPerformed
 	reloadBoxMail();
@@ -929,7 +942,7 @@ public class newMainPage extends javax.swing.JFrame {
 	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
 	}
 	// load lại Jlist hiển thị mail
-	loadMsgObToJlist("TRASH");
+	startThread("TRASH");
     }
     private void trashMail_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_trashMail_LbMouseClicked
 	//clean 
@@ -1029,6 +1042,7 @@ public class newMainPage extends javax.swing.JFrame {
     private javax.swing.JLabel fileAttachWrite_Lb;
     private javax.swing.JLabel from_Lb;
     private javax.swing.JTextField from_Tf;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
@@ -1067,8 +1081,9 @@ public class newMainPage extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * load tất cả messages nằm trong loadLabel 
-     * chuyển thành messageObject và đưa lên Jlist để hiển thị
+     * load tất cả messages nằm trong loadLabel chuyển thành messageObject và
+     * đưa lên Jlist để hiển thị
+     *
      * @param loadLabel
      */
     public void loadMsgObToJlist(String loadLabel) {
@@ -1092,17 +1107,70 @@ public class newMainPage extends javax.swing.JFrame {
 	}
     }
 
+    public void startThread(String label) {
+	List<String> loadFromLabel = new ArrayList<>();
+	loadFromLabel.add(label);
+	SwingWorker sw1 = new SwingWorker() {
+	    @Override
+	    protected String doInBackground() throws Exception {
+		ListMessagesResponse response;
+		Gmail service = GlobalVariable.getService();
+		try {
+		    response = service.users().messages().list(GlobalVariable.userId).setLabelIds(loadFromLabel).setMaxResults(Long.valueOf(2)).execute();
+		    List<Message> messages = new ArrayList<>();
+		    try {
+			while (response.getMessages() != null) {
+			    messages.addAll(response.getMessages());
+			    for (Message msg : messages) {
+				MessageObject newMessOb = MessageProcess.getQuickHeaderInfo(msg.getId());
+				publish(newMessOb);
+				Thread.sleep(1000);
+			    }
+
+			    if (response.getNextPageToken() != null) {
+				String pageToken = response.getNextPageToken();
+				response = service.users().messages().list(GlobalVariable.userId).setLabelIds(loadFromLabel).setPageToken(pageToken).execute();
+			    } else {
+				break;
+			    }
+			}
+		    } catch (IOException ex) {
+		    } catch (InterruptedException ex) {
+			Logger.getLogger(loadDataThread.class.getName()).log(Level.SEVERE, null, ex);
+		    }
+		} catch (IOException ex) {
+		    Logger.getLogger(loadDataThread.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		String res = "Finish loading";
+		return res;
+	    }
+
+	    @Override
+	    protected void process(List chunks) {
+		MessageObject val = (MessageObject) chunks.get(chunks.size() - 1);
+//		MessageObject previousOb = (MessageObject) chunks.get(chunks.size() - 1);
+		DefaultListModel model = (DefaultListModel) boxMail_Jlist.getModel();
+		model.addElement(val);
+		messageInbox.add(val);
+		boxMail_Jlist.setCellRenderer(new mailListRender());
+		boxMail_Jlist.setModel(model);
+	    }
+	};
+	sw1.execute();
+    }
+
     private void loadStartUpMailBox() {
-	String loadStartUpLabel = "INBOX";
 	try {
-	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel(loadStartUpLabel)));
+	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel("INBOX")));
 	} catch (IOException ex) {
 	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
 	}
 	if (GlobalVariable.internetOn == true) {
 	    DefaultListModel listMailMode = new DefaultListModel();
 	    boxMail_Jlist.setModel(listMailMode);
-	    loadMsgObToJlist(loadStartUpLabel);
+	    messageInbox = new ArrayList<>();
+	    startThread("INBOX");
 	    inboxMailMode = (DefaultListModel) boxMail_Jlist.getModel(); // lưu lại inbox model
 	} else {
 	    // nếu không có internet( có thể không xử lý trường hợp này vì chắc gì cô đã care)

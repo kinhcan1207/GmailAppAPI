@@ -5,6 +5,8 @@
  */
 package gmailApi;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -22,7 +24,10 @@ import com.google.api.services.gmail.model.ListLabelsResponse;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
+import com.google.api.services.gmail.model.MessagePart;
 import com.google.api.services.gmail.model.MessagePartBody;
+import com.google.api.services.gmail.model.MessagePartHeader;
+import com.google.common.collect.HashBiMap;
 import static gmailApi.MessageProcess.getListMail;
 
 import java.io.FileNotFoundException;
@@ -36,7 +41,9 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -155,6 +162,46 @@ public class GmailQuickstart {
 //	}
 //	MessageProcess.reply("1718c276288b984e", "day la mail thu 3");
 //	System.out.println(XuLyFile.listAllFileInDirectory(GlobalVariable.rootDirectorySaveTokens));
+	try {
+	    Message messageById = MessageProcess.getMessageById(service, user, "171748240b8f6f6f");
+	    MessagePart payload = messageById.getPayload();
+	    List<MessagePartHeader> headers = payload.getHeaders();
+//	    ObjectMapper objMapper = new ObjectMapper();
+	    Map<String, String> myMap = new HashMap<>();
+	    for (Object i : headers.toArray()) {
+		String data = i.toString().replace("\\\"", "");
+//		System.out.println(i);
+		String[] parts = data.split("\"");
+//		for(String m : parts){
+//		    System.out.println(m);
+//		}
+//		System.out.println(parts[3] + ":" +parts[7]);
+//		String key = data.split(":")[1].split(",")[0];
+//		System.out.println("Phan tu key: "+key);
+//		
+//		String value = data.split(":")[2];
+//		System.out.println("Phan tu value: "+value);
+		myMap.put(parts[3], parts[7]);
+	    }
+	    System.out.println(myMap.get("From"));
+	    System.out.println(myMap.get("Subject"));
+	    System.out.println(myMap.get("Date"));
+//	    for (Map.Entry m : myMap.entrySet()) {
+//		System.out.println(m.getKey() + " " + m.getValue());
+//	    }
+//	    System.out.println(myMap);
+//	    Map jsonData;
+//	    byte[] jsonData = payload.getHeaders().toArray()[0].toString().getBytes();
+//	    System.out.println(jsonData);
+//	    System.out.println(jsonData[0]);
+
+//	    myMap = objMapper.readValue(jsonData,HashMap.class);
+//	    System.out.println(myMap);
+//	    System.out.println(payload.getHeaders());
+	} catch (MessagingException ex) {
+	    Logger.getLogger(GmailQuickstart.class.getName()).log(Level.SEVERE, null, ex);
+	}
+
     }
 }
 //1712445165e55410 : test RE

@@ -16,10 +16,13 @@ import gmailApi.MessageProcess;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
 import javax.swing.DefaultListModel;
+import javax.swing.ListModel;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -94,109 +97,96 @@ public class loadDataMultiThread extends javax.swing.JFrame {
 
     private void loadData_btActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadData_btActionPerformed
 	// TODO add your handling code here:
-	new threadLoadListOb().start();
-	new threadLoadJlist().start();
+//	DefaultListModel model = new DefaultListModel();
+//	this.loadData_JList.setModel(model);
+//	loadDataThreadsssssss th1 = new loadDataThread(model);
+//	th1.start();
+//	while(th1.isAlive()){
+//	    try {
+//		model = (DefaultListModel) this.loadData_JList.getModel();
+//		this.loadData_JList.setModel(model);
+//		this.loadData_JList.setVisible(true);
+//		Thread.sleep(2000);
+//	    } catch (InterruptedException ex) {
+//		Logger.getLogger(loadDataMultiThread.class.getName()).log(Level.SEVERE, null, ex);
+//	    }s
+//	}
+	DefaultListModel model = new DefaultListModel();
+	loadData_JList.setModel(model);
+	startThread();
     }//GEN-LAST:event_loadData_btActionPerformed
+    Gmail service;
+    String userId;
+    List<String> loadFromLabel = new ArrayList<>();
+    public void startThread() {
+	SwingWorker sw1 = new SwingWorker() {
+	    @Override
+	    protected String doInBackground() throws Exception {
+		ListMessagesResponse response;
 
-    synchronized int loadDataToList(DefaultListModel listMail, List<MessageObject> listMsgOb, int lastLoadIndex) {
-	int countMessage = lastLoadIndex;
-	for (; countMessage < listMsgOb.size(); countMessage++) {
-	    listMail.add(countMessage, listMsgOb.get(countMessage));
-	}
-	return countMessage;
-    }
-    static DefaultListModel listMail = new DefaultListModel(); // khởi tạo Listmodel để đổ dữ liệu vào
-    static int countMessage;
-    static int loadLastIndex = 0;
-    static List<MessageObject> listMsgOb;
-
-    static class threadLoadListOb extends Thread {
-
-	@Override
-	public void run() {
-	    // đưa message thành Object
-	    List<String> loadFromLabel = new ArrayList<>();
-	    loadFromLabel.add("INBOX");
-	    System.out.println("Bắt đầu threadLoadListOb");
-	    try {
 		try {
-		    GlobalVariable.userId = "testdoan123456@gmail.com";
+		    userId = "testdoan123456@gmail.com";
+		    GlobalVariable.userId = userId;
 		    LoginProcess.login();
-		} catch (WrongLoginInfoException ex) {
+		    service = GlobalVariable.getService();
+
+		    response = service.users().messages().list(userId).setLabelIds(loadFromLabel).setMaxResults(Long.valueOf(2)).execute();
+		    List<Message> messages = new ArrayList<>();
+		    try {
+			while (response.getMessages() != null) {
+			    messages.addAll(response.getMessages());
+			    for (Message msg : messages) {
+				MessageObject newMessOb = MessageProcess.getQuickHeaderInfo(msg.getId());
+				publish(msg.getId() +" ( ) " + newMessOb.subject);
+				Thread.sleep(1000);
+			    }
+			    
+			    if (response.getNextPageToken() != null) {
+				String pageToken = response.getNextPageToken();
+				response = service.users().messages().list(userId).setLabelIds(loadFromLabel).setPageToken(pageToken).execute();
+			    } else {
+				break;
+			    }
+			}
+		    } catch (IOException ex) {
+		    } catch (InterruptedException ex) {
+			Logger.getLogger(loadDataThread.class.getName()).log(Level.SEVERE, null, ex);
+		    }
+		} catch (WrongLoginInfoException | IOException ex) {
 		    Logger.getLogger(loadDataThread.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		Gmail service = GlobalVariable.getService();
-		String userId = GlobalVariable.userId;
-		//list response cua mail list
-		ListMessagesResponse response;
-		response = service.users().messages().list(userId).setLabelIds(loadFromLabel).setMaxResults(Long.valueOf(5)).execute();
-		//doc tung mail
 
-		List<Message> messages = new ArrayList<>();
-		listMsgOb = new ArrayList<>();
-
-		while (response.getMessages() != null) {
-		    System.out.println("Load List Object !");
-		    synchronized (this) {
-			final long startTime = System.currentTimeMillis();
-			messages.addAll(response.getMessages());
-			for (Message msg : messages) {
-			    MessageObject newMessOb = new MessageObject();
-			    newMessOb.id = msg.getId();
-			    newMessOb.from = MessageProcess.getFrom(MessageProcess.getMessageById(GlobalVariable.getService(), GlobalVariable.userId, newMessOb.id).getPayload().getHeaders());
-			    listMsgOb.add(newMessOb); //MessageProcess.parseHeaderMail(msg.getId())
-			}
-			System.out.println("Load: "+(listMsgOb.size()-countMessage)+" Object; count="+countMessage);
-			// đưa Object vào Model
-			for (; countMessage < listMsgOb.size(); countMessage++) {
-			    listMail.add(countMessage, listMsgOb.get(countMessage));
-			}
-			final long endTime = System.currentTimeMillis();
-
-			System.out.println("Total execution time: " + (endTime - startTime));
-
-			System.out.println("Đã load xong dữ liệu lên model");
-		    }
-		    try {
-			if (response.getNextPageToken() != null) {
-			    String pageToken = response.getNextPageToken();
-			    response = service.users().messages().list(userId).setLabelIds(loadFromLabel).setPageToken(pageToken).setMaxResults(Long.valueOf(5)).execute();
-			} else {
-			    break;
-			}
-			System.out.println("Bắt đầu Thread sleep 4000");
-			Thread.sleep(1000);
-			System.out.println("Thoát ra Thread sleep 4000");
-		    } catch (InterruptedException ex) {
-			Logger.getLogger(loadDataMultiThread.class.getName()).log(Level.SEVERE, null, ex);
-		    }
-		    System.out.println("Bắt đầu quay lại vòng lặp");
-		}
-
-	    } catch (IOException | MessagingException ex) {
+		String res = "Finish loading";
+		return res;
 	    }
-	}
-    }
 
-    static class threadLoadJlist extends Thread {
+	    @Override
+	    protected void process(List chunks) {
+		String val = (String) chunks.get(chunks.size() - 1);
+//		MessageObject previousOb = (MessageObject) chunks.get(chunks.size() - 1);
+		DefaultListModel model = (DefaultListModel) loadData_JList.getModel();
+		model.addElement(val);
+		loadData_JList.setModel(model);
+	    }
 
-	@Override
-	public void run() {
-	    System.out.println("Load Ob to Jlist");
-	    while (true) {
-		loadData_JList.setModel(listMail);
-		loadData_JList.setVisible(true);
-		listMail = (DefaultListModel) loadData_JList.getModel();
+	    @Override
+	    protected void done() {
+		// this method is called when the background  
+		// thread finishes execution 
 		try {
-		    System.out.println("Bắt đầu Thread sleep 2000");
-		    Thread.sleep(4000);
-		    System.out.println("Kết thúc Thread sleep 2000");
-		} catch (InterruptedException ex) {
-		    Logger.getLogger(loadDataMultiThread.class.getName()).log(Level.SEVERE, null, ex);
+		    String statusMsg = (String) get();
+		    System.out.println("Inside done function");
+		    loadData_bt.setText(statusMsg);
+
+		} catch (InterruptedException e) {
+		    e.printStackTrace();
+		} catch (ExecutionException e) {
+		    e.printStackTrace();
 		}
-		System.out.println("Bắt đầu quay lại vòng lặp 2");
+
 	    }
-	}
+	};
+	sw1.execute();
     }
 
     /**
@@ -237,7 +227,7 @@ public class loadDataMultiThread extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    public static javax.swing.JList<String> loadData_JList;
+    private javax.swing.JList<String> loadData_JList;
     private javax.swing.JButton loadData_bt;
     // End of variables declaration//GEN-END:variables
 }
