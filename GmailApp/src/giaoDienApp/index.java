@@ -1232,7 +1232,7 @@ public class index extends javax.swing.JFrame {
 		messageInbox = Init.initInboxList("INBOX");
 
 		list_mailbox.setModel(listMail);                      // đổ dữ liệu từ listmodel đã tạo ở trên vào cái hiển thị
-		list_mailbox.setCellRenderer(new mailListRender());   // set các cell trong list lại .
+//		list_mailbox.setCellRenderer(new mailListRender());   // set các cell trong list lại .
 		for (int i = 0; i < messageInbox.size(); i++) {
 		    listMail.add(i, messageInbox.get(i));
 		}

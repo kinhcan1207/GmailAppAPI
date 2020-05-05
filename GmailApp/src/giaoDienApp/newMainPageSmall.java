@@ -587,7 +587,7 @@ public class newMainPageSmall extends javax.swing.JFrame {
 	    loadingBoxName_Lb.setText("INBOX");
 	    DefaultListModel model = (DefaultListModel) boxMail_Jlist.getModel();
 	    boxMail_Jlist.setModel(inboxMailMode);                      // đổ dữ liệu từ listmodel đã tạo ở trên vào cái hiển thị
-	    boxMail_Jlist.setCellRenderer(new mailListRender());   // set các cell trong list lại .
+	    boxMail_Jlist.setCellRenderer(new mailListRender("INBOX"));   // set các cell trong list lại .
 	    try {
 		this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel(this.loadingBoxName_Lb.getText())));
 	    } catch (IOException ex) {
@@ -729,7 +729,7 @@ public class newMainPageSmall extends javax.swing.JFrame {
 		}
 		// set Model cho Jlist
 		boxMail_Jlist.setModel(searchMailModel);                      
-		boxMail_Jlist.setCellRenderer(new mailListRender());
+		boxMail_Jlist.setCellRenderer(new mailListRender("SEARCH"));
 		
 	    } catch (IOException | MessagingException ex) {
 		Logger.getLogger(newMainPageSmall.class.getName()).log(Level.SEVERE, null, ex);
@@ -820,7 +820,7 @@ public class newMainPageSmall extends javax.swing.JFrame {
 	} else {
 	    //nếu là lần thứ 2 trở đi bấm vào thì chỉ set lại model lên mà ko load lại dữ liệu
 	    boxMail_Jlist.setModel(trashMailMode);
-	    boxMail_Jlist.setCellRenderer(new mailListRender());
+	    boxMail_Jlist.setCellRenderer(new mailListRender("TRASH"));
 	}
 	this.boxMail_Jlist.setVisible(true);
 	this.writeMail_Pn.setVisible(false);
@@ -932,7 +932,7 @@ public class newMainPageSmall extends javax.swing.JFrame {
 	    messageInbox = Init.initInboxList(loadLabel);
 	    // set model cho 
 	    boxMail_Jlist.setModel(listMailModel);                      // đổ dữ liệu từ listmodel đã tạo ở trên vào cái hiển thị
-	    boxMail_Jlist.setCellRenderer(new mailListRender());   // set các cell trong list lại .
+	    boxMail_Jlist.setCellRenderer(new mailListRender(loadLabel));   // set các cell trong list lại .
 	    // đưa từng object lên model
 	    for (int i = 0; i < messageInbox.size(); i++) {
 		listMailModel.add(i, messageInbox.get(i));

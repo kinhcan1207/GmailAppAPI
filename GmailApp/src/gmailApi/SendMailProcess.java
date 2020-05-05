@@ -238,7 +238,6 @@ public class SendMailProcess {
      *
      * @param service
      * @param userId
-     * @param msg
      */
     public void createDraft(Gmail service,
 	    String userId) {
@@ -258,8 +257,31 @@ public class SendMailProcess {
 	    Logger.getLogger(SendMailProcess.class.getName()).log(Level.SEVERE, null, ex);
 	}
     }
-    
-        /**
+
+    public boolean sendDraft(Draft draft) {
+	if (fileName == null) {
+	    // just Text mail
+	    prepareTextMail();
+	} else {
+	    prepareTextMail();
+	    prepareMailAttachment();
+	}
+	com.google.api.services.gmail.model.Message message;
+
+	
+	try {
+	    message = createMessageWithEmail(this.msg);
+	    draft.setMessage(message);
+	    GlobalVariable.getService().users().drafts().send(userId, draft).execute();
+	    return true;
+	} catch (IOException | MessagingException ex) {
+	    Logger.getLogger(SendMailProcess.class.getName()).log(Level.SEVERE, null, ex);
+	}
+	return false;
+
+    }
+
+    /**
      * reply a message
      *
      * @param messageId

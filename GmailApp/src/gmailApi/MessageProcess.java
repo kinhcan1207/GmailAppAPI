@@ -106,7 +106,7 @@ public class MessageProcess {
 	Gmail service = GlobalVariable.getService();
 	String userId = GlobalVariable.userId;
 	MessageObject msg = new MessageObject();
-	msg.id = messageId;
+	
 	Message message;
 	try {
 	    message = service.users().messages().get(userId, messageId).setFormat("full").execute();
@@ -120,6 +120,9 @@ public class MessageProcess {
 	    }
 	    msg.from = myMap.get("From");
 	    msg.date = myMap.get("Date");
+	    msg.to = myMap.get("To");
+	    msg.id = messageId;
+	    
 	} catch (IOException ex) {
 	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
 	}
@@ -239,6 +242,7 @@ public class MessageProcess {
 	try {
 	    message = service.users().messages().get(userId, msgOb.id).setFormat("full").execute();
 	    List<MessagePart> parts = message.getPayload().getParts();
+	    System.out.println("parts: " +parts.isEmpty());
 	    loadHeaderForMessageOb(msgOb, message);
 	    loadBodyForMessageOb(msgOb, parts);
 	} catch (IOException ex) {

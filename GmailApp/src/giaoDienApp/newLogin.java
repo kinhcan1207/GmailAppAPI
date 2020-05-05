@@ -128,12 +128,13 @@ public class newLogin extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Consolas", 1, 24)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("X");
+        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel2MouseClicked(evt);
             }
         });
-        login_Pn.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 20, 20, 40));
+        login_Pn.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 0, 60, 40));
 
         save_Chb.setBackground(new java.awt.Color(161, 233, 237));
         save_Chb.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
