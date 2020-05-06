@@ -91,7 +91,7 @@ public class MessageObject implements Serializable {
 
     @Override
     public String toString() {
-        return from + cc; //To change body of generated methods, choose Tools | Templates.
+        return from + " " + to + " " + date; //To change body of generated methods, choose Tools | Templates.
     }
 
 }

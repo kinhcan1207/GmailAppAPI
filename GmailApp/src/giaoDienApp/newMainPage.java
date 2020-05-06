@@ -59,6 +59,7 @@ public class newMainPage extends javax.swing.JFrame {
     DefaultListModel sentMailMode = null;
     int countSentLabel = 0;
     SwingWorker sw1;
+
     public newMainPage(newLogin parentFrame) {
 	this.parentFrame = parentFrame;
 	initComponents();
@@ -1001,6 +1002,11 @@ public class newMainPage extends javax.swing.JFrame {
 	} catch (IOException ex) {
 	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
 	}
+	// clean read panel 
+	cleanReadMailPanel();
+	DefaultListModel model = (DefaultListModel)boxMail_Jlist.getModel();
+	model.removeAllElements();
+	boxMail_Jlist.setModel(model);
 	// load lại jlist dựa vào label đang load
 	startThread(this.loadingBoxName_Lb.getText());
     }
@@ -1076,12 +1082,19 @@ public class newMainPage extends javax.swing.JFrame {
     private void loadDaGuiMailBox() {
 	// bắt đầu thread load mail lên
 	startThread("SENT");
+//	loadMsgObToJlist("SENT");
+	boxMail_Jlist.setVisible(true);
+	
     }
     private void daGui_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_daGui_LbMouseClicked
-	if(loadingBoxName_Lb.getText().equals("SENT")) return;
-	if(sw1.isCancelled()==false) sw1.cancel(true);
-	
-	
+	if (loadingBoxName_Lb.getText().equals("SENT")) {
+	    return;
+	}
+	// test
+//	if (sw1.isCancelled() == false) {
+//	    sw1.cancel(true);
+//	}
+//	System.out.println("==================================================");
 	// xoá read panel
 	cleanReadMailPanel();
 	// set tên cho label đang load
@@ -1091,12 +1104,14 @@ public class newMainPage extends javax.swing.JFrame {
 	// nếu là lần đầu bấm vào, listMode chưa được set thì khởi tạo
 	if (sentMailMode == null) {
 	    // khởi tạo new model
-	    sentMailMode = new DefaultListModel();
+	    DefaultListModel mode = new DefaultListModel();
 	    //gán model cho Jlist
-	    boxMail_Jlist.setModel(sentMailMode);
+	    boxMail_Jlist.setModel(mode);
 	    boxMail_Jlist.setCellRenderer(new mailListRender("SENT"));
 	    // load label TRASH và gán vào Jlist
+//	    loadMsgObToJlist("SENT");
 	    loadDaGuiMailBox();
+	    sentMailMode = (DefaultListModel) boxMail_Jlist.getModel();
 	} else {
 	    int count = 0;
 	    try {
@@ -1220,94 +1235,167 @@ public class newMainPage extends javax.swing.JFrame {
     private javax.swing.JPanel writeMail_Pn;
     // End of variables declaration//GEN-END:variables
 
-//    /**
-//     * load tất cả messages nằm trong loadLabel chuyển thành messageObject và
-//     * đưa lên Jlist để hiển thị
-//     *
-//     * @param label
-//     */
-//    public void loadMsgObToJlist(String loadLabel) {
-//	// load label nào thì set text label đấy
-//	loadingBoxName_Lb.setText(loadLabel);
-//	// get model hiện tại của Jlist
-//	DefaultListModel listMailModel = (DefaultListModel) boxMail_Jlist.getModel(); // khởi tạo Listmodel để đổ dữ liệu vào
+    /**
+     * load tất cả messages nằm trong loadLabel chuyển thành messageObject và
+     * đưa lên Jlist để hiển thị
+     *
+     * @param label
+     */
+    public void loadMsgObToJlist(String loadLabel) {
+	// load label nào thì set text label đấy
+	loadingBoxName_Lb.setText(loadLabel);
+	// get model hiện tại của Jlist
+	DefaultListModel listMailModel = new DefaultListModel(); // khởi tạo Listmodel để đổ dữ liệu vào
 //	listMailModel.removeAllElements();
-//	try {
-//	    // khởi tạo List<MessageObject> bằng hàm initInboxList()
-//	    messageInbox = Init.initInboxList(loadLabel);
-//	    // set model cho 
-//	    boxMail_Jlist.setModel(listMailModel);                      // đổ dữ liệu từ listmodel đã tạo ở trên vào cái hiển thị
-//	    boxMail_Jlist.setCellRenderer(new mailListRender());   // set các cell trong list lại .
-//	    // đưa từng object lên model
-//	    for (int i = 0; i < messageInbox.size(); i++) {
-//		listMailModel.add(i, messageInbox.get(i));
-//	    }
-//	} catch (FailToLoadInitInboxException ex) {
-//	    Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
-//	}
-//    }
-    
+	try {
+	    // khởi tạo List<MessageObject> bằng hàm initInboxList()
+	    List<MessageObject> messageInbox = Init.initInboxList(loadLabel);
+	    // set model cho 
+
+	    // đưa từng object lên model
+	    for (int i = 0; i < messageInbox.size(); i++) {
+		listMailModel.addElement(messageInbox.get(i));
+	    }
+//	    boxMail_Jlist.setCellRenderer(new mailListRender("SENT"));   // set các cell trong list lại .
+	    boxMail_Jlist.setModel(listMailModel);                      // đổ dữ liệu từ listmodel đã tạo ở trên vào cái hiển thị
+	    sentMailMode = listMailModel;
+	} catch (FailToLoadInitInboxException ex) {
+	    Logger.getLogger(index.class.getName()).log(Level.SEVERE, null, ex);
+	}
+    }
+
+    class worker extends SwingWorker<String, MessageObject> {
+
+	List<String> loadFromLabel;
+
+	public worker(String loadFromLabel) {
+	    this.loadFromLabel = new ArrayList<>();
+	    this.loadFromLabel.add(loadFromLabel);
+	}
+
+	@Override
+	protected String doInBackground() throws Exception {
+	    ListMessagesResponse response = null;
+	    Gmail service = GlobalVariable.getService();
+	    try {
+		response = service.users().messages().list(GlobalVariable.userId).setLabelIds(loadFromLabel).execute();
+		List<Message> messages = new ArrayList<>();
+		try {
+		    while (response.getMessages() != null && isCancelled() != true) {
+			messages.addAll(response.getMessages());
+			for (Message msg : messages) {
+			    MessageObject newMessOb = MessageProcess.getQuickHeaderInfo(msg.getId());
+			    System.out.println(newMessOb.id + " " + newMessOb.from + " " + newMessOb.date);
+			    publish(newMessOb);
+			    Thread.sleep(100);
+			}
+
+			if (response.getNextPageToken() != null) {
+			    String pageToken = response.getNextPageToken();
+			    response = service.users().messages().list(GlobalVariable.userId).setLabelIds(loadFromLabel).setPageToken(pageToken).execute();
+			} else {
+			    break;
+			}
+		    }
+		} catch (IOException ex) {
+		}
+	    } catch (IOException ex) {
+		Logger.getLogger(loadDataThread.class.getName()).log(Level.SEVERE, null, ex);
+	    }
+
+	    String res = "Finish loading";
+	    return res;
+	}
+
+	@Override
+	protected void process(List<MessageObject> chunks) {
+	    if (isCancelled()) {
+		return;
+	    }
+	    MessageObject val = chunks.get(chunks.size() - 1);
+	    DefaultListModel model = (DefaultListModel) boxMail_Jlist.getModel();
+	    model.addElement(val);
+	    boxMail_Jlist.setCellRenderer(new mailListRender(loadFromLabel.get(0)));
+	    boxMail_Jlist.setModel(model);
+	}
+
+	@Override
+	protected void done() {
+	    // this method is called when the background
+	    // thread finishes execution
+	    System.out.println("Inside done function");
+	}
+
+    };
+
     /**
      *
      * @param label
      */
     public void startThread(String label) {
-	List<String> loadFromLabel = new ArrayList<>();
-	loadFromLabel.add(label);
-	sw1 = new SwingWorker() {
-
-	    @Override
-	    protected String doInBackground() throws Exception {
-		ListMessagesResponse response = null;
-		Gmail service = GlobalVariable.getService();
-		try {
-		    response = service.users().messages().list(GlobalVariable.userId).setLabelIds(loadFromLabel).execute(); 
-		    List<Message> messages = new ArrayList<>();
-		    try {
-			while (response.getMessages() != null && isCancelled() != true) {
-			    messages.addAll(response.getMessages());
-			    for (Message msg : messages) {
-				MessageObject newMessOb = MessageProcess.getQuickHeaderInfo(msg.getId());
-				System.out.println(msg.getId());
-				if (isDone()) {
-				    System.out.println("thread sw1 bị cancel !");
-				    return null;
-				}
-				System.out.println("cái này vẫn chạy nữa");
-				publish(newMessOb);
-//				Thread.sleep(1000);
-			    }
-
-			    if (response.getNextPageToken() != null) {
-				String pageToken = response.getNextPageToken();
-				response = service.users().messages().list(GlobalVariable.userId).setLabelIds(loadFromLabel).setPageToken(pageToken).execute();
-			    } else {
-				break;
-			    }
-			}
-		    } catch (IOException ex) {
-		    }
-		} catch (IOException ex) {
-		    Logger.getLogger(loadDataThread.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
-		String res = "Finish loading";
-		return res;
-	    }
-
-	    @Override
-	    protected void process(List chunks) {
-		if (isCancelled()) {
-		    return;
-		}
-		MessageObject val = (MessageObject) chunks.get(chunks.size() - 1);
-		DefaultListModel model = (DefaultListModel) boxMail_Jlist.getModel();
-		model.addElement(val);
-		boxMail_Jlist.setCellRenderer(new mailListRender(label));
-		boxMail_Jlist.setModel(model);
-	    }
-	};
+	if( sw1 != null && (sw1.isCancelled()==false || sw1.isDone() == false)){
+	    sw1.cancel(true);
+	    sw1 = null;
+	}
+	
+	sw1 = new worker(label);
 	sw1.execute();
+//	List<String> loadFromLabel = new ArrayList<>();
+//	loadFromLabel.add(label);
+//	sw1 = new SwingWorker() {
+//
+//	    @Override
+//	    protected String doInBackground() throws Exception {
+//		ListMessagesResponse response = null;
+//		Gmail service = GlobalVariable.getService();
+//		try {
+//		    response = service.users().messages().list(GlobalVariable.userId).setLabelIds(loadFromLabel).execute();
+//		    List<Message> messages = new ArrayList<>();
+//		    try {
+//			while (response.getMessages() != null && isCancelled() != true) {
+//			    messages.addAll(response.getMessages());
+//			    for (Message msg : messages) {
+//				MessageObject newMessOb = MessageProcess.getQuickHeaderInfo(msg.getId());
+//				System.out.println(msg.getId());
+//				if (isDone()) {
+//				    System.out.println("thread sw1 bị cancel !");
+//				    return null;
+//				}
+//				System.out.println("cái này vẫn chạy nữa");
+//				publish(newMessOb);
+////				Thread.sleep(1000);
+//			    }
+//
+//			    if (response.getNextPageToken() != null) {
+//				String pageToken = response.getNextPageToken();
+//				response = service.users().messages().list(GlobalVariable.userId).setLabelIds(loadFromLabel).setPageToken(pageToken).execute();
+//			    } else {
+//				break;
+//			    }
+//			}
+//		    } catch (IOException ex) {
+//		    }
+//		} catch (IOException ex) {
+//		    Logger.getLogger(loadDataThread.class.getName()).log(Level.SEVERE, null, ex);
+//		}
+//
+//		String res = "Finish loading";
+//		return res;
+//	    }
+//
+//	    @Override
+//	    protected void process(List chunks) {
+//		if (isCancelled()) {
+//		    return;
+//		}
+//		MessageObject val = (MessageObject) chunks.get(chunks.size() - 1);
+//		DefaultListModel model = (DefaultListModel) boxMail_Jlist.getModel();
+//		model.addElement(val);
+//		boxMail_Jlist.setCellRenderer(new mailListRender(label));
+//		boxMail_Jlist.setModel(model);
+//	    }
+//	};
+//	sw1.execute();
     }
 
     private void loadStartUpMailBox() {

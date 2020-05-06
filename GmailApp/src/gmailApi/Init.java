@@ -56,6 +56,7 @@ public class Init {
 		newMessOb.id = msg.getId();
 		newMessOb.from = MessageProcess.getFrom(MessageProcess.getMessageById(GlobalVariable.getService(), GlobalVariable.userId, newMessOb.id).getPayload().getHeaders());
 		listMessages.add(newMessOb); //MessageProcess.parseHeaderMail(msg.getId())
+		System.out.println(newMessOb.toString());
 	    }
 	} catch (IOException | MessagingException ex) {
 //	    Logger.getLogger(Init.class.getName()).log(Level.SEVERE, null, ex);

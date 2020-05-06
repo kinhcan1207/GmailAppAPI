@@ -35,6 +35,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -106,7 +107,7 @@ public class MessageProcess {
 	Gmail service = GlobalVariable.getService();
 	String userId = GlobalVariable.userId;
 	MessageObject msg = new MessageObject();
-	
+
 	Message message;
 	try {
 	    message = service.users().messages().get(userId, messageId).setFormat("full").execute();
@@ -122,7 +123,7 @@ public class MessageProcess {
 	    msg.date = myMap.get("Date");
 	    msg.to = myMap.get("To");
 	    msg.id = messageId;
-	    
+
 	} catch (IOException ex) {
 	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
 	}
@@ -173,7 +174,7 @@ public class MessageProcess {
 	msgOb.date = myMap.get("Date");
 	msgOb.cc = myMap.get("Cc");
 	msgOb.to = myMap.get("To");
-	msgOb.messageID =myMap.get("Message-ID");
+	msgOb.messageID = myMap.get("Message-ID");
 	msgOb.references = myMap.get("References");
     }
 
@@ -241,10 +242,19 @@ public class MessageProcess {
 	Message message;
 	try {
 	    message = service.users().messages().get(userId, msgOb.id).setFormat("full").execute();
-	    List<MessagePart> parts = message.getPayload().getParts();
-	    System.out.println("parts: " +parts.isEmpty());
+	    List<MessagePart> parts = new ArrayList<MessagePart>();
+	    System.out.println("parts: " + parts.isEmpty());
 	    loadHeaderForMessageOb(msgOb, message);
-	    loadBodyForMessageOb(msgOb, parts);
+	    parts = message.getPayload().getParts();
+	    if (parts != null) {
+		loadBodyForMessageOb(msgOb, parts);
+	    } else {
+		String data = message.getPayload().getBody().getData();
+		Base64 base64Url = new Base64(true);
+		byte[] emailBytes = Base64.decodeBase64(data);
+		String text = new String(emailBytes);
+		msgOb.mainText = text;
+	    }
 	} catch (IOException ex) {
 	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
 	}

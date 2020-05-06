@@ -166,6 +166,7 @@ public class GmailQuickstart {
 	    Message messageById = MessageProcess.getMessageById(service, user, "171748240b8f6f6f");
 	    MessagePart payload = messageById.getPayload();
 	    List<MessagePartHeader> headers = payload.getHeaders();
+	    MessagePartBody body1 = payload.getBody();
 //	    ObjectMapper objMapper = new ObjectMapper();
 	    Map<String, String> myMap = new HashMap<>();
 	    for (Object i : headers.toArray()) {
@@ -184,8 +185,10 @@ public class GmailQuickstart {
 		myMap.put(parts[3], parts[7]);
 	    }
 	    System.out.println(myMap.get("From"));
+	    System.out.println(myMap.get("To"));
 	    System.out.println(myMap.get("Subject"));
 	    System.out.println(myMap.get("Date"));
+	    System.out.println(payload.getBody());
 //	    for (Map.Entry m : myMap.entrySet()) {
 //		System.out.println(m.getKey() + " " + m.getValue());
 //	    }
