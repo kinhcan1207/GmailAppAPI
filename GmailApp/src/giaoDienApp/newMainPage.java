@@ -290,7 +290,7 @@ public class newMainPage extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setLocation(new java.awt.Point(300, 100));
+        setLocation(new java.awt.Point(0, 0));
 
         menu_Pn.setBackground(new java.awt.Color(34, 92, 145));
         menu_Pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -340,7 +340,7 @@ public class newMainPage extends javax.swing.JFrame {
                 logout_LbMouseClicked(evt);
             }
         });
-        menu_Pn.add(logout_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 777, 70, 60));
+        menu_Pn.add(logout_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 610, 70, 60));
 
         daGui_Lb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         daGui_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/send_email_50px.png"))); // NOI18N
@@ -465,7 +465,7 @@ public class newMainPage extends javax.swing.JFrame {
         mainText_Tarea.setToolTipText("");
         jScrollPane3.setViewportView(mainText_Tarea);
 
-        mail_Pn.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 850, 460));
+        mail_Pn.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 850, 350));
 
         topMenu_Pn.setBackground(new java.awt.Color(255, 255, 255));
         topMenu_Pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -559,11 +559,10 @@ public class newMainPage extends javax.swing.JFrame {
                     .addComponent(loadingBoxName_Lb, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(reload_Bt, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(countMailLoading_Lb, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(mailBox_PnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(mailBox_PnLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jScrollPane1))
-                    .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jSeparator8, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 612, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2))
         );
 
         dynamic_option_read_writeMenu_Pn.setMinimumSize(new java.awt.Dimension(870, 60));
@@ -596,15 +595,18 @@ public class newMainPage extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 840, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(topMenu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(mailBox_Pn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(mail_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(dynamic_option_read_writeMenu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(mail_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 611, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dynamic_option_read_writeMenu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(menu_Pn, javax.swing.GroupLayout.PREFERRED_SIZE, 739, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
