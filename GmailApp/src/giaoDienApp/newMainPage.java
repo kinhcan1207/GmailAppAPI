@@ -105,6 +105,7 @@ public class newMainPage extends javax.swing.JFrame {
         downMail_Lb = new javax.swing.JLabel();
         moveToTrash_Lb = new javax.swing.JLabel();
         reply_Lb = new javax.swing.JLabel();
+        important_CheckBox = new javax.swing.JCheckBox();
         waiting_Pn = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         menu_Pn = new javax.swing.JPanel();
@@ -198,7 +199,7 @@ public class newMainPage extends javax.swing.JFrame {
                 cancel_LbMouseClicked(evt);
             }
         });
-        writeMail_Pn.add(cancel_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 10, -1, 40));
+        writeMail_Pn.add(cancel_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 10, -1, 40));
 
         send_Lb.setFont(new java.awt.Font("Consolas", 1, 26)); // NOI18N
         send_Lb.setForeground(new java.awt.Color(204, 204, 204));
@@ -210,7 +211,7 @@ public class newMainPage extends javax.swing.JFrame {
                 send_LbMouseClicked(evt);
             }
         });
-        writeMail_Pn.add(send_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 10, -1, 40));
+        writeMail_Pn.add(send_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 10, -1, 40));
 
         readMail_Pn.setBackground(new java.awt.Color(34, 92, 145));
         readMail_Pn.setMinimumSize(new java.awt.Dimension(870, 60));
@@ -238,7 +239,7 @@ public class newMainPage extends javax.swing.JFrame {
                 downMail_LbMouseClicked(evt);
             }
         });
-        readMail_Pn.add(downMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 0, 50, 60));
+        readMail_Pn.add(downMail_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 0, 50, 60));
 
         moveToTrash_Lb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         moveToTrash_Lb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/remove_30px.png"))); // NOI18N
@@ -260,7 +261,20 @@ public class newMainPage extends javax.swing.JFrame {
                 reply_LbMouseClicked(evt);
             }
         });
-        readMail_Pn.add(reply_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 0, 50, 60));
+        readMail_Pn.add(reply_Lb, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 10, 50, 50));
+
+        important_CheckBox.setBackground(new java.awt.Color(34, 92, 145));
+        important_CheckBox.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
+        important_CheckBox.setForeground(new java.awt.Color(247, 231, 231));
+        important_CheckBox.setText("IMPORTANT");
+        important_CheckBox.setToolTipText("");
+        important_CheckBox.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        important_CheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                important_CheckBoxActionPerformed(evt);
+            }
+        });
+        readMail_Pn.add(important_CheckBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 10, 100, 40));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/loading.gif"))); // NOI18N
 
@@ -491,6 +505,11 @@ public class newMainPage extends javax.swing.JFrame {
                 boxMail_JlistMouseClicked(evt);
             }
         });
+        boxMail_Jlist.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                boxMail_JlistValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(boxMail_Jlist);
 
         loadingBoxName_Lb.setBackground(new java.awt.Color(255, 255, 255));
@@ -713,7 +732,9 @@ public class newMainPage extends javax.swing.JFrame {
 	} else {
 	    if (loadingBoxName_Lb.getText().equals("DRAFT")) {
 		newMailPrepare();
+		this.boxMail_Jlist.setVisible(true);
 		send_Lb.setText("Send draft");
+		// xử lý send draft tiếp theo sẽ được xử lý ở event của nút send
 	    } else {
 		int chooseMessage = boxMail_Jlist.getSelectedIndex();
 		if (chooseMessage != -1) {
@@ -732,7 +753,20 @@ public class newMainPage extends javax.swing.JFrame {
 			model.addElement(m.getKey());
 		    }
 		    this.fileAttachRead_Jcb.setModel(model);
+		    msgOb.unread = false;
+		    // set lại label cho mail đã bị đọc và render lại cái jlist 
+		    List<String> labelsToRemove = new ArrayList<>();
+		    labelsToRemove.add("UNREAD");
+		    try {
+			MessageProcess.modifyLabelsToMessage(new ArrayList<String>(), labelsToRemove, msgOb.id);
+			DefaultListModel modelJlist = (DefaultListModel) boxMail_Jlist.getModel();
+			boxMail_Jlist.setCellRenderer(new mailListRender(loadingBoxName_Lb.getText()));
+			boxMail_Jlist.setModel(modelJlist);
+		    } catch (IOException ex) {
+			Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
+		    }
 		}
+		//re render
 	    }
 	}
     }//GEN-LAST:event_boxMail_JlistMouseClicked
@@ -1004,7 +1038,7 @@ public class newMainPage extends javax.swing.JFrame {
 	}
 	// clean read panel 
 	cleanReadMailPanel();
-	DefaultListModel model = (DefaultListModel)boxMail_Jlist.getModel();
+	DefaultListModel model = (DefaultListModel) boxMail_Jlist.getModel();
 	model.removeAllElements();
 	boxMail_Jlist.setModel(model);
 	// load lại jlist dựa vào label đang load
@@ -1084,7 +1118,7 @@ public class newMainPage extends javax.swing.JFrame {
 	startThread("SENT");
 //	loadMsgObToJlist("SENT");
 	boxMail_Jlist.setVisible(true);
-	
+
     }
     private void daGui_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_daGui_LbMouseClicked
 	if (loadingBoxName_Lb.getText().equals("SENT")) {
@@ -1133,11 +1167,43 @@ public class newMainPage extends javax.swing.JFrame {
 	this.writeMail_Pn.setVisible(false);
 	this.readMail_Pn.setVisible(true);
     }//GEN-LAST:event_daGui_LbMouseClicked
-
+    
+    public void loadDraftMailBox(){
+	startThread("DRAFT");
+    }
+    
     private void draft_LbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_draft_LbMouseClicked
 	// TODO add your handling code here:
+	if (loadingBoxName_Lb.getText().equals("DRAFT")) {
+	    return;
+	}
+	
+	// xoá read panel
+	cleanReadMailPanel();
+	// set tên cho label đang load
 	loadingBoxName_Lb.setText("DRAFT");
+	// set số lượng mail hiện lên
+	try {
+	    this.countMailLoading_Lb.setText(String.valueOf(LabelProcess.countAllMailLabel(this.loadingBoxName_Lb.getText())));
+	} catch (IOException ex) {
+	    Logger.getLogger(newMainPage.class.getName()).log(Level.SEVERE, null, ex);
+	}
+	// khởi tạo new model
+	DefaultListModel mode = new DefaultListModel();
+	//gán model cho Jlist
+	boxMail_Jlist.setModel(mode);
+	boxMail_Jlist.setCellRenderer(new mailListRender("DRAFT"));
+	// load label DRAFT và gán vào Jlist
+	loadDraftMailBox();
     }//GEN-LAST:event_draft_LbMouseClicked
+
+    private void boxMail_JlistValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_boxMail_JlistValueChanged
+	// TODO add your handling code here:
+    }//GEN-LAST:event_boxMail_JlistValueChanged
+
+    private void important_CheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_important_CheckBoxActionPerformed
+	// TODO add your handling code here:
+    }//GEN-LAST:event_important_CheckBoxActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1198,6 +1264,7 @@ public class newMainPage extends javax.swing.JFrame {
     private javax.swing.JLabel fileAttachWrite_Lb;
     private javax.swing.JLabel from_Lb;
     private javax.swing.JTextField from_Tf;
+    private javax.swing.JCheckBox important_CheckBox;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
@@ -1333,11 +1400,11 @@ public class newMainPage extends javax.swing.JFrame {
      * @param label
      */
     public void startThread(String label) {
-	if( sw1 != null && (sw1.isCancelled()==false || sw1.isDone() == false)){
+	if (sw1 != null && (sw1.isCancelled() == false || sw1.isDone() == false)) {
 	    sw1.cancel(true);
 	    sw1 = null;
 	}
-	
+
 	sw1 = new worker(label);
 	sw1.execute();
 //	List<String> loadFromLabel = new ArrayList<>();

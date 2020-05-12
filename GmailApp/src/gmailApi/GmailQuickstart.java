@@ -164,6 +164,7 @@ public class GmailQuickstart {
 //	System.out.println(XuLyFile.listAllFileInDirectory(GlobalVariable.rootDirectorySaveTokens));
 	try {
 	    Message messageById = MessageProcess.getMessageById(service, user, "171748240b8f6f6f");
+	    System.out.println(messageById.getLabelIds());
 	    MessagePart payload = messageById.getPayload();
 	    List<MessagePartHeader> headers = payload.getHeaders();
 	    MessagePartBody body1 = payload.getBody();
@@ -204,7 +205,12 @@ public class GmailQuickstart {
 	} catch (MessagingException ex) {
 	    Logger.getLogger(GmailQuickstart.class.getName()).log(Level.SEVERE, null, ex);
 	}
-
+	List<String> labelAdd = new ArrayList<>();
+	labelAdd.add("TRASH");
+	List<String> labelremove = new ArrayList<>();
+//	labelAdd.add("TRASH");
+	MessageProcess.modifyLabelsToMessage(labelAdd, labelremove, "171748240b8f6f6f");
+	
     }
 }
 //1712445165e55410 : test RE

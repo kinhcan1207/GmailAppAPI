@@ -32,7 +32,7 @@ public class MessageObject implements Serializable {
     // hai trường đặc biệt sử dụng khi reply mail
     public String messageID;
     public String references;
-    
+    public boolean unread; 
     public MessageObject(){
     }
     

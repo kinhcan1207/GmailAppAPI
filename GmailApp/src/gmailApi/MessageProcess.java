@@ -123,7 +123,7 @@ public class MessageProcess {
 	    msg.date = myMap.get("Date");
 	    msg.to = myMap.get("To");
 	    msg.id = messageId;
-
+	    msg.unread = checkUnread(message);
 	} catch (IOException ex) {
 	    Logger.getLogger(MessageProcess.class.getName()).log(Level.SEVERE, null, ex);
 	}
@@ -397,8 +397,16 @@ public class MessageProcess {
      */
     public static void modifyLabelsToMessage(List<String> labelsToAdd, List<String> labelsToRemove, String messageId) throws IOException {
 	Gmail service = GlobalVariable.getService();
-	ModifyMessageRequest mods = new ModifyMessageRequest().setAddLabelIds(labelsToAdd)
-		.setRemoveLabelIds(labelsToRemove);
+	ModifyMessageRequest mods;
+	if (labelsToAdd.isEmpty()) {
+	    mods = new ModifyMessageRequest().setRemoveLabelIds(labelsToRemove);
+	} else if (labelsToRemove.isEmpty()) {
+	    mods = new ModifyMessageRequest().setAddLabelIds(labelsToAdd);
+	} else {
+	    mods = new ModifyMessageRequest().setAddLabelIds(labelsToAdd)
+		    .setRemoveLabelIds(labelsToRemove);
+	}
+
 	Message message = service.users().messages().modify(GlobalVariable.userId, messageId, mods).execute();
 
 	System.out.println("Message id: " + message.getId());
@@ -680,6 +688,15 @@ public class MessageProcess {
 	    }
 	}
 	return msgOb;
+    }
+
+    public static boolean checkUnread(Message message) {
+	//	    Message message = GlobalVariable.getService().users().messages().get(GlobalVariable.userId, messageId).setFormat("full").execute();
+	List<String> labelIds = message.getLabelIds();
+	if (labelIds.stream().anyMatch((label) -> (label.equals("UNREAD")))) {
+	    return true;
+	}
+	return false;
     }
 
 }
